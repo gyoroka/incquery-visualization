@@ -1,5 +1,10 @@
 package hu.bme.mit.emf.incquery.visualization.handlers;
 
+
+import hu.bme.mit.emf.incquery.visualization.view.ZestLabelProvider;
+import hu.bme.mit.emf.incquery.visualization.view.ZestNodeContentProvider;
+import hu.bme.mit.emf.incquery.visualization.jface.*;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -11,10 +16,12 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
+import org.eclipse.zest.core.viewers.GraphViewer;
 
 import com.google.inject.Inject;
 
@@ -47,5 +54,26 @@ public class VisualizePatternModel extends AbstractHandler {
 		MessageDialog.openInformation(Display.getCurrent().getActiveShell(),
 				"Command selected", String.format("%d patterns in model", model
 						.getPatterns().size()));
+		//View view = new View();
+		//Application app = new Application();
+		//app.start(context);
+		//View view=new View();
+		//view.createPartControl(Display.getCurrent().getActiveShell().getParent());
+		//Display display = new Display();
+		//Shell shell =new Shell(display);
+		//GraphViewer viewer= new GraphViewer(Display.getCurrent().getActiveShell().getParent(),SWT.BORDER);
+		//viewer.setContentProvider(new ZestNodeContentProvider());
+		//viewer.setLabelProvider(new ZestLabelProvider());
+
+		WidgetWindow wwin = new WidgetWindow();
+		
+	    wwin.setBlockOnOpen(true);
+	    wwin.setModel(model);
+	    wwin.open();
+	    
+	    
+	    //Display.getCurrent().dispose();
+		
+		
 	}
 }
