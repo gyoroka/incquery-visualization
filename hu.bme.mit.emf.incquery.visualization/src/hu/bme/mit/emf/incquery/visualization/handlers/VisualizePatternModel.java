@@ -1,9 +1,10 @@
 package hu.bme.mit.emf.incquery.visualization.handlers;
 
 
+import hu.bme.mit.emf.incquery.visualization.model.NodeModelContentProvider;
+import hu.bme.mit.emf.incquery.visualization.view.View;
 import hu.bme.mit.emf.incquery.visualization.view.ZestLabelProvider;
 import hu.bme.mit.emf.incquery.visualization.view.ZestNodeContentProvider;
-import hu.bme.mit.emf.incquery.visualization.jface.*;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -13,15 +14,26 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.zest.core.viewers.GraphViewer;
+import org.eclipse.zest.layouts.LayoutStyles;
+import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
 
 import com.google.inject.Inject;
 
@@ -67,15 +79,21 @@ public class VisualizePatternModel extends AbstractHandler {
 		//viewer.setContentProvider(new ZestNodeContentProvider());
 		//viewer.setLabelProvider(new ZestLabelProvider());
 
+		/*
 		WidgetWindow wwin = new WidgetWindow();
 		
 	    wwin.setBlockOnOpen(true);
 	    wwin.setModel(model);
 	    wwin.open();
 	    
-	    
+	    Display.getCurrent().dispose();
+	    */
 	    //Display.getCurrent().dispose();
 		
+		
+		View view=new View();
+		view.setModel(model);
+		view.open();
 		
 	}
 }
