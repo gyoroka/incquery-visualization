@@ -4,6 +4,7 @@ import hu.bme.mit.emf.incquery.visualization.model.NodeModelContentProvider;
 import hu.bme.mit.emf.incquery.visualization.view.ZestLabelProvider;
 import hu.bme.mit.emf.incquery.visualization.view.ZestNodeContentProvider;
 
+import org.eclipse.draw2d.Button;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -27,7 +28,10 @@ public class WidgetWindow extends ApplicationWindow {
 	  protected Control createContents(Composite parent)
 	  {
 	    getShell().setText("Widget Window");
-	    parent.setSize(500,500);
+
+	    
+	    parent.setSize(800,800);
+	    
 	    //FillLayout fl= new FillLayout(SWT.VERTICAL);	    
 	    //parent.setLayout(fl);
 	    GraphViewer viewer = new GraphViewer(parent, SWT.BORDER);

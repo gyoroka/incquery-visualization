@@ -51,9 +51,11 @@ public class VisualizePatternModel extends AbstractHandler {
 
 	private void createVisualization(PatternModel model) {
 		// TODO fill body
+		/*
 		MessageDialog.openInformation(Display.getCurrent().getActiveShell(),
 				"Command selected", String.format("%d patterns in model", model
 						.getPatterns().size()));
+						*/
 		//View view = new View();
 		//Application app = new Application();
 		//app.start(context);
