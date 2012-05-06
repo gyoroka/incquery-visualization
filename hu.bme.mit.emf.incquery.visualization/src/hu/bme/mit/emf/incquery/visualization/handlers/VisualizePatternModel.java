@@ -1,10 +1,7 @@
 package hu.bme.mit.emf.incquery.visualization.handlers;
 
 
-import hu.bme.mit.emf.incquery.visualization.model.NodeModelContentProvider;
-import hu.bme.mit.emf.incquery.visualization.view.View;
-import hu.bme.mit.emf.incquery.visualization.view.ZestLabelProvider;
-import hu.bme.mit.emf.incquery.visualization.view.ZestNodeContentProvider;
+import hu.bme.mit.emf.incquery.visualization.view.GraphView;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -16,24 +13,13 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
-import org.eclipse.zest.core.viewers.GraphViewer;
-import org.eclipse.zest.layouts.LayoutStyles;
-import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
 
 import com.google.inject.Inject;
 
@@ -91,9 +77,28 @@ public class VisualizePatternModel extends AbstractHandler {
 	    //Display.getCurrent().dispose();
 		
 		
-		View view=new View();
+		//View view=new View();
+		//view.setModel(model);
+		//view.open();
+		
+		String ID_VIEW="hu.bme.mit.emf.incquery.visualization.view.GraphView";
+		
+		//GraphView cgv= new GraphView(model);
+		
+		IWorkbenchPage page = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage();
+		IViewPart form = page.findView(ID_VIEW);
+		if (form == null) {
+			try {
+				form = page.showView(ID_VIEW);
+			} catch (PartInitException e) {
+				e.printStackTrace();
+			}
+		} else
+		page.bringToTop(form);
+
+		GraphView view = (GraphView) form;
 		view.setModel(model);
-		view.open();
 		
 	}
 }

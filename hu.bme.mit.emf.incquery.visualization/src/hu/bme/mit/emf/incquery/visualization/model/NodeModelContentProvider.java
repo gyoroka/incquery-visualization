@@ -26,36 +26,37 @@ public class NodeModelContentProvider {
 	private int bodycount=0;
 
 	public NodeModelContentProvider(PatternModel model) {
-		
-		
-
-		//EMFModelLoad loader = new EMFModelLoad();
-		//Resource resource= loader.Load(input);
-		//EObject resource=model;
-		System.out.println(model.toString());
-		
+		init();
 		EList<Pattern> patterns = model.getPatterns();
 		String s;
-		i=1;
 		Iterator<Pattern> patterniterator = patterns.iterator();
-		nodes = new ArrayList<MyNode>();
-		connections = new ArrayList<MyConnection>();
 		MyNode node=new MyNode(""+0,"Patterns");
 		nodes.add(node);
 		while (patterniterator.hasNext())
 		{
-
-			add(patterniterator.next(),node);
-			//s=newnode.eGet(newnode.eClass().getEStructuralFeature("name")).toString();	
-			
-			
+			add(patterniterator.next(),node);			
 		}
-		
-
 		for (MyConnection connection : connections) {
 			connection.getSource().getConnectedTo()
-					.add(connection.getDestination());
+					.add(connection);
 		}
+	}
+	
+	public NodeModelContentProvider(Pattern pattern) {		
+		init();
+		add(pattern,null);
+		for (MyConnection connection : connections) {
+			connection.getSource().getConnectedTo()
+					.add(connection);
+		}
+	}
+	
+	
+	private void init()
+	{
+		i=1;
+		nodes = new ArrayList<MyNode>();
+		connections = new ArrayList<MyConnection>();
 	}
 	
 	private void addNode(MyNode akt, MyNode src)
@@ -63,8 +64,11 @@ public class NodeModelContentProvider {
 		
 		System.out.println(akt.getId()+". "+akt.getName());
 		nodes.add(akt);
-		MyConnection connect = new MyConnection(""+i, ""+i,src,akt);
-		connections.add(connect);
+		if (src!=null)
+		{
+			MyConnection connect = new MyConnection(""+i, ""+i,src,akt);
+			connections.add(connect);
+		}
 		i++;
 	}
 	

@@ -35,5 +35,14 @@
          </activeWhen>
       </handler>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="hu.bme.mit.emf.incquery.visualization.view.GraphView"
+            id="hu.bme.mit.emf.incquery.visualization.view.GraphView"
+            name="IncQuery Visualization"
+            restorable="true">
+      </view>
+   </extension>
 
 </plugin>
