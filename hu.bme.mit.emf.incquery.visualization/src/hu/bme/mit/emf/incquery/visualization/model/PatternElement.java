@@ -6,11 +6,11 @@ public class PatternElement extends MyNode {
 
 	private Pattern pattern;
 	
-	public PatternElement(String id, String name) {
-		super(id, name);
+	public PatternElement(String name) {
+		super(name);
 	}
-	public PatternElement(String id, String name,Pattern p) {
-		super(id, name);
+	public PatternElement(String name,Pattern p) {
+		super(name);
 		pattern=p;
 	}
 	

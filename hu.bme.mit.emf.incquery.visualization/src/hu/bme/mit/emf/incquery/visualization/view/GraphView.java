@@ -1,6 +1,7 @@
 package hu.bme.mit.emf.incquery.visualization.view;
 
 import hu.bme.mit.emf.incquery.visualization.model.CallGraphModelContentProvider;
+import hu.bme.mit.emf.incquery.visualization.model.ContentGraphModelContentProvider;
 import hu.bme.mit.emf.incquery.visualization.model.NodeModelContentProvider;
 import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 
@@ -29,10 +30,11 @@ public class GraphView extends ViewPart{
 	
 	public void setContentModel(Pattern p)
 	{
-		NodeModelContentProvider nodemodel = new NodeModelContentProvider(p);
+		//NodeModelContentProvider nodemodel = new NodeModelContentProvider(p);
+		ContentGraphModelContentProvider contentmodel = new ContentGraphModelContentProvider(p);
 		  
 		try {
-			contentGraphViewer.setInput(nodemodel.getNodes());
+			contentGraphViewer.setInput(contentmodel.getNodes());
 		}
 		catch(Exception e) { e.printStackTrace();}
 	}
@@ -42,11 +44,11 @@ public class GraphView extends ViewPart{
 	{
 		patternmodel=m;
 		CallGraphModelContentProvider callgraphmodel = new CallGraphModelContentProvider(patternmodel);
-		NodeModelContentProvider nodemodel = new NodeModelContentProvider(patternmodel);
+		//NodeModelContentProvider nodemodel = new NodeModelContentProvider(patternmodel);
 		  
 		try {
 			callGraphViewer.setInput(callgraphmodel.getNodes());
-			contentGraphViewer.setInput(nodemodel.getNodes());
+			//contentGraphViewer.setInput(nodemodel.getNodes());
 		}
 		catch(Exception e) { e.printStackTrace();}
 	}
@@ -60,7 +62,7 @@ public class GraphView extends ViewPart{
 	    callGraphViewer = new GraphViewer(form, SWT.NONE);
 		callGraphViewer.setContentProvider(new CallGraphViewContentProvider());
 		callGraphViewer.setLabelProvider(new CallGraphLabelProvider());
-		callGraphViewer.setLayoutAlgorithm(new TreeLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING),true);
+		callGraphViewer.setLayoutAlgorithm(new SpringLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING),true);
 		callGraphViewer.applyLayout();
 		callGraphViewer.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
 		callGraphViewer.addSelectionChangedListener( new ISelectionChangedListener(){
@@ -84,8 +86,9 @@ public class GraphView extends ViewPart{
 
 		
 	    contentGraphViewer = new GraphViewer(form, SWT.NONE);
-		contentGraphViewer.setContentProvider(new ZestNodeContentProvider());
-		contentGraphViewer.setLabelProvider(new ZestLabelProvider());
+		contentGraphViewer.setContentProvider(new ContentGraphViewContentProvider());
+		contentGraphViewer.setLabelProvider(new ContentGraphLabelProvider());
+		contentGraphViewer.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
 		contentGraphViewer.setLayoutAlgorithm(new SpringLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING),true);
 		contentGraphViewer.applyLayout();
 

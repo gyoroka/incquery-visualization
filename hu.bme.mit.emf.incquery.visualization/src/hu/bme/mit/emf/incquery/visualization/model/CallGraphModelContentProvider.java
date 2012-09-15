@@ -16,19 +16,14 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint;
 
 public class CallGraphModelContentProvider {
-	private int i;
 	private int bodycount;
 	private CallGraphModel cgm;
 	
 	public CallGraphModelContentProvider(PatternModel model)
 	{
 		cgm=new CallGraphModel();
-		i=1;
-		EList<Pattern> patterns = model.getPatterns();
-		Iterator<Pattern> patterniterator = patterns.iterator();
-		while (patterniterator.hasNext())
-		{
-			add(patterniterator.next(),null,false);	
+		for (Pattern p : model.getPatterns()) {
+			add(p,null,false);
 		}
 	}
 	
@@ -37,15 +32,13 @@ public class CallGraphModelContentProvider {
 		String s;
 		s=p.getName();
 		bodycount=0;
-		PatternElement node= new PatternElement(""+i,s,p);
+		PatternElement node= new PatternElement(s,p);
 		cgm.addPattern(node, src,negative);
 		
 		//body
-		Iterator<PatternBody> patternbodyiterator = p.getBodies().iterator();
-		while (patternbodyiterator.hasNext())
-		{	
+		for (PatternBody pb : p.getBodies()) {
 			bodycount++;
-			add(patternbodyiterator.next(),node);		
+			add(pb,node);
 		}
 		
 	}
@@ -53,20 +46,18 @@ public class CallGraphModelContentProvider {
 	private void add(PatternBody pb, MyNode src)
 	{
 		String s=""+bodycount;
-		MyNode node = new MyNode(""+i,"Body: "+s);
+		MyNode node = new MyNode("Body: "+s);
 		cgm.addBodie(node,src);	
 		
 		//constrains
-		Iterator<Constraint> constraintiterator = pb.getConstraints().iterator();
-		while (constraintiterator.hasNext())
-		{
-			add(constraintiterator.next(),node);
+		for (Constraint c : pb.getConstraints()) {
+			add(c,node);
 		}
 	}
 	
 	private void add(PatternCompositionConstraint pcc,MyNode src)
 	{
-		PatternElement node = new PatternElement(""+i,pcc.getPatternRef().getName(),pcc.getPatternRef());
+		PatternElement node = new PatternElement(pcc.getCall().getPatternRef().getName(),pcc.getCall().getPatternRef());
 		cgm.addPattern(node,src,pcc.isNegative());
 	}
 	

@@ -29,12 +29,10 @@ public class NodeModelContentProvider {
 		init();
 		EList<Pattern> patterns = model.getPatterns();
 		String s;
-		Iterator<Pattern> patterniterator = patterns.iterator();
-		MyNode node=new MyNode(""+0,"Patterns");
+		MyNode node=new MyNode("Patterns");
 		nodes.add(node);
-		while (patterniterator.hasNext())
-		{
-			add(patterniterator.next(),node);			
+		for (Pattern pattern : patterns) {
+			add(pattern,node);
 		}
 		for (MyConnection connection : connections) {
 			connection.getSource().getConnectedTo()
@@ -62,11 +60,11 @@ public class NodeModelContentProvider {
 	private void addNode(MyNode akt, MyNode src)
 	{
 		
-		System.out.println(akt.getId()+". "+akt.getName());
+//		System.out.println(akt.getId()+". "+akt.getName());
 		nodes.add(akt);
 		if (src!=null)
 		{
-			MyConnection connect = new MyConnection(""+i, ""+i,src,akt);
+			MyConnection connect = new MyConnection(""+i,src,akt);
 			connections.add(connect);
 		}
 		i++;
@@ -89,36 +87,40 @@ public class NodeModelContentProvider {
 	}
 	private void add(IntValue iv, MyNode src)
 	{
-		MyNode node = new MyNode(""+i,"IntValue: "+iv.getValue());
+		MyNode node = new MyNode("IntValue: "+iv.getValue());
 		addNode(node,src);
 	}
 	private void add(StringValue sv, MyNode src)
 	{
-		MyNode node = new MyNode(""+i,"StringValue: "+sv.getValue());
+		MyNode node = new MyNode("StringValue: "+sv.getValue());
 		addNode(node,src);
 	}
 	private void add(BoolValue bv, MyNode src)
 	{
-		MyNode node = new MyNode(""+i,"BoolValue: "+bv.isValue());
+		MyNode node = new MyNode("BoolValue: "+bv.isValue());
 		addNode(node,src);
 	}
 	private void add(DoubleValue dv, MyNode src)
 	{
-		MyNode node = new MyNode(""+i,"DoubleValue: "+dv.getValue());
+		MyNode node = new MyNode("DoubleValue: "+dv.getValue());
 		addNode(node,src);
 	}
 	private void add(VariableValue vv, MyNode src)
 	{
-		MyNode node = new MyNode(""+i,"VariableValue: "+vv.getValue().getVar());
+		MyNode node = new MyNode("VariableValue: "+vv.getValue().getVar());
 		addNode(node,src);
 	}
 	private void add(ListValue lv, MyNode src)
 	{
-		Iterator<ValueReference> vri =lv.getValues().iterator();
-		while (vri.hasNext())
+		for (ValueReference vr : lv.getValues())
 		{
-			add(vri.next(),src);
+			add(vr,src);
 		}
+//		Iterator<ValueReference> vri =lv.getValues().iterator();
+//		while (vri.hasNext())
+//		{
+//			add(vri.next(),src);
+//		}
 	}
 	private void add(ValueReference vr, MyNode src)
 	{
@@ -149,12 +151,12 @@ public class NodeModelContentProvider {
 	}
 	private void add(VariableReference varref,MyNode src)
 	{
-		MyNode node=new MyNode(""+i,"VariableReference: "+varref.getVar());
+		MyNode node=new MyNode("VariableReference: "+varref.getVar());
 		addNode(node,src);
 	}
 	private void add(ClassType ctype,MyNode src)
 	{
-		MyNode node=new MyNode(""+i,"ClassType: "+ctype.getTypename());
+		MyNode node=new MyNode("ClassType: "+ctype.getTypename());
 		addNode(node,src);
 	}
 	/*
@@ -233,22 +235,25 @@ public class NodeModelContentProvider {
 			s+="."+getTail(peh.getTail());
 		}
 		s+="("+peh.getSrc().getVar()+","+getString(peh.getDst())+")";
-		MyNode node=new MyNode(""+i,"PathExpression: "+s);
+		MyNode node=new MyNode("PathExpression: "+s);
 		addNode(node,src);
 	}
 	private void add(PatternCompositionConstraint pcc,MyNode src)
 	{
-		Iterator<ValueReference> pi=pcc.getParameters().iterator();
-		while (pi.hasNext())
-		{
-			add(pi.next(),src);
+		for (ValueReference vr: pcc.getCall().getParameters()) {
+			add(vr,src);
 		}
-		MyNode node = new MyNode(""+i,pcc.getPatternRef().getName());
+//		Iterator<ValueReference> pi=pcc.getCall().getParameters().iterator();
+//		while (pi.hasNext())
+//		{
+//			add(pi.next(),src);
+//		}
+		MyNode node = new MyNode(pcc.getCall().getPatternRef().getName());
 		addNode(node,src);
 	}
 	private void add(CompareConstraint cc,MyNode src)
 	{
-		MyNode node = new MyNode(""+i,"CompareConstraint: "+cc.getFeature().getLiteral());
+		MyNode node = new MyNode("CompareConstraint: "+cc.getFeature().getLiteral());
 		addNode(node,src);
 		add(cc.getLeftOperand(),node);
 		add(cc.getRightOperand(),node);
@@ -264,7 +269,7 @@ public class NodeModelContentProvider {
 	private void add(EClassifierConstraint ecc, MyNode src)
 	{
 		ClassType ct=(ClassType)ecc.getType();
-		MyNode node = new MyNode(""+i,"EClassifierConstraint: "+ct.getClassname().getName()+"("+ecc.getVar().getVar()+")");
+		MyNode node = new MyNode("EClassifierConstraint: "+ct.getClassname().getName()+"("+ecc.getVar().getVar()+")");
 		addNode(node,src);
 	}
 	private void add(Constraint ec,MyNode src)
@@ -301,28 +306,32 @@ public class NodeModelContentProvider {
 	private void add(PatternBody pb, MyNode src)
 	{
 		String s=""+bodycount;
-		MyNode node = new MyNode(""+i,"Body: "+s);
+		MyNode node = new MyNode("Body: "+s);
 		addNode(node,src);		
 		//parameters
-		Iterator<Variable> parametersiterator = pb.getVariables().iterator();
-		while (parametersiterator.hasNext())
-		{
-			add(parametersiterator.next(),node);
-			
-
-		}		
-		//constrains
-		Iterator<Constraint> constraintiterator = pb.getConstraints().iterator();
-		while (constraintiterator.hasNext())
-		{
-			add(constraintiterator.next(),node);
+		for (Variable v : pb.getVariables()) {
+			add(v,node);
 		}
+//		Iterator<Variable> parametersiterator = pb.getVariables().iterator();
+//		while (parametersiterator.hasNext())
+//		{
+//			add(parametersiterator.next(),node);
+//		}		
+		//constrains
+		for (Constraint c : pb.getConstraints()) {
+			add(c,node);
+		}
+//		Iterator<Constraint> constraintiterator = pb.getConstraints().iterator();
+//		while (constraintiterator.hasNext())
+//		{
+//			add(constraintiterator.next(),node);
+//		}
 	}
 	
 	private void add(Variable v, MyNode src)
 	{
 		String s=v.getName();
-		MyNode aktnode= new MyNode(""+i,"Variable:"+s);
+		MyNode aktnode= new MyNode("Variable:"+s);
 		addNode(aktnode,src);
 	}
 	private void add(Pattern p, MyNode src)
@@ -330,7 +339,7 @@ public class NodeModelContentProvider {
 		String s;
 		s=p.getName();
 		bodycount=0;
-		MyNode node= new MyNode(""+i,"Pattern:"+s);
+		MyNode node= new MyNode("Pattern:"+s);
 		addNode(node,src);
 		
 		
@@ -352,19 +361,26 @@ public class NodeModelContentProvider {
 		*/
 		
 		//body
-		Iterator<PatternBody> patternbodyiterator = p.getBodies().iterator();
-		while (patternbodyiterator.hasNext())
-		{	
+		for (PatternBody pb : p.getBodies()) {
 			bodycount++;
-			add(patternbodyiterator.next(),node);		
+			add(pb,node);
 		}
+//		Iterator<PatternBody> patternbodyiterator = p.getBodies().iterator();
+//		while (patternbodyiterator.hasNext())
+//		{	
+//			bodycount++;
+//			add(patternbodyiterator.next(),node);		
+//		}
 		
 		//parameters
-		Iterator<Variable> parametersiterator = p.getParameters().iterator();
-		while (parametersiterator.hasNext())
-		{
-			add(parametersiterator.next(),node);
+		for (Variable v : p.getParameters()) {
+			add(v,node);
 		}
+//		Iterator<Variable> parametersiterator = p.getParameters().iterator();
+//		while (parametersiterator.hasNext())
+//		{
+//			add(parametersiterator.next(),node);
+//		}
 		/*
 		//modifiers
 		Iterator<Modifiers> modifiersiterator = p.getModifiers().iterator();

@@ -29,7 +29,7 @@ public class CallGraphModel {
 		{
 			if (n.equals(body)) 
 			{
-				MyConnection conn=new MyConnection("0",body.getName(),body,tmppattern);
+				MyConnection conn=new MyConnection(body.getName(),body,tmppattern);
 				if (negative) conn.setNegative(true);
 				body.getConnectedTo().add(conn);
 			}
@@ -42,7 +42,7 @@ public class CallGraphModel {
 		{
 			if (n.equals(pattern)) 
 			{
-				MyConnection conn=new MyConnection("0",body.getName(),pattern,body);
+				MyConnection conn=new MyConnection(body.getName(),pattern,body);
 				pattern.getConnectedTo().add(conn);
 			}
 		}

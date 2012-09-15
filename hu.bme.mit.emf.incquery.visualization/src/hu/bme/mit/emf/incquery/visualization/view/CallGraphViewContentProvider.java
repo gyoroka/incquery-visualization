@@ -16,19 +16,6 @@ public class CallGraphViewContentProvider extends ArrayContentProvider implement
 	@Override
 	public Object[] getElements(Object inputElement) {
 		
-			/*
-			List<MyNode> nodes = (List<MyNode>) inputElement;
-			List<MyNode> returns=new ArrayList<MyNode>();
-			for (MyNode n:nodes)
-			{
-			List<MyConnection> conns=n.getConnectedTo();
-				for (MyConnection c:conns)
-				{
-					returns.add(c.getDestination());
-				}
-			}
-			return returns.toArray();		
-			*/
 		List<MyNode> nodes=new ArrayList<MyNode>();
 		try{
 			List<Object> objects=(List<Object>) inputElement;
@@ -67,7 +54,7 @@ public class CallGraphViewContentProvider extends ArrayContentProvider implement
 				{
 					if (c2.getDestination().equals(dest)) 
 					{
-						MyConnection conn=new MyConnection("0",c.getLabel(),c.getSource(),c2.getDestination());
+						MyConnection conn=new MyConnection(c.getLabel(),c.getSource(),c2.getDestination());
 						if (c2.isNegative()) conn.setNegative(true);
 						retcon.add(conn);
 					}

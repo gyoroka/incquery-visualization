@@ -49,41 +49,11 @@ public class VisualizePatternModel extends AbstractHandler {
 
 	private void createVisualization(PatternModel model) {
 		// TODO fill body
-		/*
-		MessageDialog.openInformation(Display.getCurrent().getActiveShell(),
-				"Command selected", String.format("%d patterns in model", model
-						.getPatterns().size()));
-						*/
-		//View view = new View();
-		//Application app = new Application();
-		//app.start(context);
-		//View view=new View();
-		//view.createPartControl(Display.getCurrent().getActiveShell().getParent());
-		//Display display = new Display();
-		//Shell shell =new Shell(display);
-		//GraphViewer viewer= new GraphViewer(Display.getCurrent().getActiveShell().getParent(),SWT.BORDER);
-		//viewer.setContentProvider(new ZestNodeContentProvider());
-		//viewer.setLabelProvider(new ZestLabelProvider());
+		
 
-		/*
-		WidgetWindow wwin = new WidgetWindow();
-		
-	    wwin.setBlockOnOpen(true);
-	    wwin.setModel(model);
-	    wwin.open();
-	    
-	    Display.getCurrent().dispose();
-	    */
-	    //Display.getCurrent().dispose();
-		
-		
-		//View view=new View();
-		//view.setModel(model);
-		//view.open();
 		
 		String ID_VIEW="hu.bme.mit.emf.incquery.visualization.view.GraphView";
 		
-		//GraphView cgv= new GraphView(model);
 		
 		IWorkbenchPage page = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage();
