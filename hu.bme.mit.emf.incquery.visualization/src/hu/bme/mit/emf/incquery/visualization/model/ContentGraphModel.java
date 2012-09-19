@@ -3,10 +3,14 @@ package hu.bme.mit.emf.incquery.visualization.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AggregatedValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ComputationValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.DoubleValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.IntValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.LiteralValueReference;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
@@ -15,8 +19,9 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
 
 public class ContentGraphModel {
 	//public List<MyNode> parameters;
-	public List<VariableElement> variables;
-	public List<MyNode> ints,strings,bools,doubles,patterns;
+	private List<VariableElement> variables;
+	private List<PatternElement> patterns;
+	private List<MyNode> ints,strings,bools,doubles;
 	public List<MyNode> getNodes() {
 		List<MyNode> tmp=new ArrayList<MyNode>();
 		//tmp.addAll(parameters);
@@ -35,7 +40,7 @@ public class ContentGraphModel {
 		strings=new ArrayList<MyNode>();
 		bools=new ArrayList<MyNode>();
 		doubles=new ArrayList<MyNode>();
-		patterns=new ArrayList<MyNode>();
+		patterns=new ArrayList<PatternElement>();
 	}
 	public void addParameter(Variable v)
 	{
@@ -43,8 +48,9 @@ public class ContentGraphModel {
 		variables.add(ve);
 	}
 	public void addVariable(Variable v) {
-		VariableElement ve= new VariableElement(v.getName());
-		variables.add(ve);		
+		getVariable(v);
+		//VariableElement ve= new VariableElement(v.getName());
+		//variables.add(ve);		
 	}
 	public void addPathExpression(VariableReference varr, ValueReference valr,String head,String tail) 
 	{
@@ -69,6 +75,29 @@ public class ContentGraphModel {
 		MyConnection conn=new MyConnection(s,left,right);
 		left.getConnectedTo().add(conn);
 	}
+	public PatternElement addPatternComposition(PatternCall pc)
+	{
+		Pattern p=pc.getPatternRef();
+		List<ValueReference> srcParams=pc.getParameters();
+		List<Variable> dstParams=p.getParameters();
+		PatternElement pe=getPatternValue(p);
+		for (int index=0;index<srcParams.size();index++)
+		{
+			ValueReference vr=srcParams.get(index);
+			MyNode src=getValueNode(vr);
+			String varName=dstParams.get(index).getName();
+			boolean l=false;
+			for (String parString:pe.getParameters())
+			{
+				if (parString.equals(varName)) l=true;
+			}
+			if (!l) pe.getParameters().add(varName);
+			MyConnection conn=new MyConnection(varName,src,pe);
+			src.getConnectedTo().add(conn);
+		}
+		return pe;
+	}
+	//find=null if not found
 	public VariableElement findVariable(Variable v)
 	{
 		String s=v.getName();
@@ -106,7 +135,7 @@ public class ContentGraphModel {
 	public MyNode findBool(boolean l)
 	{
 		String s=Boolean.toString(l);
-		return findInt(s);
+		return findBool(s);
 	}
 	public MyNode findBool(String s)
 	{
@@ -119,7 +148,7 @@ public class ContentGraphModel {
 	public MyNode findDouble(double d)
 	{
 		String s=Double.toString(d);
-		return findInt(s);
+		return findDouble(s);
 	}
 	public MyNode findDouble(String s)
 	{
@@ -129,11 +158,25 @@ public class ContentGraphModel {
 		}
 		return null;
 	}
+	public PatternElement findPattern(Pattern p)
+	{
+		String s=p.getName();
+		return findPattern(s);
+	}
+	public PatternElement findPattern(String s)
+	{
+		for (PatternElement item:patterns)
+		{
+			if (item.getName().equals(s)) return item;
+		}
+		return null;
+	}
+	//get=creates if not found
 	private MyNode getValueNode(ValueReference vr)
 	{
 		MyNode node=null;
 		LiteralValueReference lvr=null;
-		if (vr instanceof VariableValue) node=getVariableValue(((VariableValue)vr));
+		if (vr instanceof VariableValue) node=getVariableValue((VariableValue)vr);
 		if (vr instanceof LiteralValueReference)
 		{
 			lvr=(LiteralValueReference)vr;
@@ -142,15 +185,25 @@ public class ContentGraphModel {
 			if (lvr instanceof BoolValue) node=getBoolValue((BoolValue)lvr);
 			if (lvr instanceof DoubleValue) node=getDoubleValue((DoubleValue)lvr);
 		}
+		if (vr instanceof ComputationValue) node=getComputationValue((ComputationValue)vr);
 		return node;
 	}
-	private MyNode getVariableValue(VariableValue vv)
+	private VariableElement getVariable(Variable v)
+	{
+		VariableElement node=findVariable(v);
+		if (node!=null) return node;
+		node = new VariableElement(v.getName());
+		variables.add(node);
+		return node;
+	}
+	private VariableElement getVariableValue(VariableValue vv)
 	{
 		Variable v=vv.getValue().getVariable();
-		MyNode node=findVariable(v);
+		VariableElement node=findVariable(v);
 		if (node!=null) return node;
-		//TODO
-		return null;
+		node = new VariableElement(v.getName());
+		variables.add(node);
+		return node;
 	}
 	private MyNode getIntValue(IntValue iv) {
 		int i=iv.getValue();
@@ -182,6 +235,24 @@ public class ContentGraphModel {
 		node = new MyNode(Double.toString(d));
 		doubles.add(node);
 		return node;
+	}
+	private PatternElement getPatternValue(Pattern pv) {
+		PatternElement node=findPattern(pv);
+		if (node!=null) return node;
+		node = new PatternElement(pv.getName());
+		patterns.add(node);
+		return node;
+	}
+	private PatternElement getComputationValue(ComputationValue cv) {
+		AggregatedValue av=(AggregatedValue)cv;
+		PatternElement node=addPatternComposition(av.getCall());
+		node.setCount(true);
+		//PatternElement node=findPattern(pv);
+		//if (node!=null) return node;
+		//node = new PatternElement(pv.getName());
+		//patterns.add(node);
+		return node;
+		//return null;
 	}
 	
 	

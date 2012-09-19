@@ -10,6 +10,8 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHe
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.RelationType;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Type;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
@@ -53,6 +55,7 @@ public class ContentGraphModelContentProvider {
 		if (c instanceof PathExpressionConstraint) add((PathExpressionConstraint)c);
 		if (c instanceof EClassifierConstraint) add((EClassifierConstraint)c);
 		if (c instanceof CompareConstraint) add((CompareConstraint)c);
+		if (c instanceof PatternCompositionConstraint) add((PatternCompositionConstraint)c);
 		
 	}
 	public void add(PathExpressionConstraint pec)
@@ -90,6 +93,12 @@ public class ContentGraphModelContentProvider {
 	{
 		String s=cc.getFeature().getLiteral();
 		cgm.addCompare(cc.getLeftOperand(), cc.getRightOperand(), s);
+	}
+	public void add(PatternCompositionConstraint pcc)
+	{
+		PatternCall pc=pcc.getCall();
+		//Pattern p=pc.getPatternRef();
+		cgm.addPatternComposition(pc);
 	}
 	
 	private String getTail(PathExpressionTail pet)

@@ -2,6 +2,7 @@ package hu.bme.mit.emf.incquery.visualization.view;
 
 import hu.bme.mit.emf.incquery.visualization.model.MyConnection;
 import hu.bme.mit.emf.incquery.visualization.model.MyNode;
+import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 import hu.bme.mit.emf.incquery.visualization.model.VariableElement;
 
 import org.eclipse.draw2d.ConnectionRouter;
@@ -19,11 +20,29 @@ IConnectionStyleProvider, IEntityStyleProvider {
 
 	@Override
 	public String getText(Object element) {
+		if (element instanceof PatternElement)
+		{
+			PatternElement pe=(PatternElement)element;
+			if (pe.getParameters().size()==0) return pe.getName();
+			String s="";
+			for (String ss:pe.getParameters())
+			{
+				s+=","+ss;
+			}
+			s=s.substring(1);
+			s=pe.getName()+"("+s+")";
+			//return pe.getName()+"("+s+")";
+			if (pe.getCount()) return "#"+s+"";
+			return s;
+		}
 		if (element instanceof VariableElement)
 		{
 			VariableElement ve= (VariableElement)element;
-			if (ve.getClassifierName()!=null) return ve.getClassifierName()+"("+ve.getName()+")";
-			else return ve.getName();
+			String s=ve.getName();
+			if (ve.getName().startsWith("_")) s=ve.getName().substring(1);
+			if (ve.getClassifierName()!=null) 
+				return ve.getClassifierName()+"("+s+")";
+			else return s;
 		}
 		if (element instanceof MyNode) {
 			MyNode myNode = (MyNode) element;
@@ -47,12 +66,18 @@ IConnectionStyleProvider, IEntityStyleProvider {
 	@Override
 	public Color getNodeHighlightColor(Object entity) {
 		// TODO Auto-generated method stub
+		//return new Color(Display.getDefault(),255, 0, 0);
 		return null;
 	}
 
 	@Override
 	public Color getBorderColor(Object entity) {
 		// TODO Auto-generated method stub
+		if (entity instanceof VariableElement)
+		{
+			VariableElement ve= (VariableElement)entity;
+			if (ve.getName().startsWith("_")) return new Color(Display.getDefault(),100, 100, 20);
+		}
 		return null;
 	}
 
@@ -65,6 +90,11 @@ IConnectionStyleProvider, IEntityStyleProvider {
 	@Override
 	public int getBorderWidth(Object entity) {
 		// TODO Auto-generated method stub
+		if (entity instanceof VariableElement)
+		{
+			VariableElement ve= (VariableElement)entity;
+			if (ve.getName().startsWith("_")) return 2;
+		}
 		return 0;
 	}
 
@@ -111,6 +141,7 @@ IConnectionStyleProvider, IEntityStyleProvider {
 	@Override
 	public Color getHighlightColor(Object rel) {
 		// TODO Auto-generated method stub
+		//return new Color(Display.getDefault(),255, 0, 0);
 		return null;
 	}
 

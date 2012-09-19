@@ -2,6 +2,7 @@ package hu.bme.mit.emf.incquery.visualization.view;
 
 import hu.bme.mit.emf.incquery.visualization.model.MyConnection;
 import hu.bme.mit.emf.incquery.visualization.model.MyNode;
+import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 
 import org.eclipse.draw2d.ConnectionRouter;
 import org.eclipse.draw2d.IFigure;
@@ -19,6 +20,10 @@ IConnectionStyleProvider, IEntityStyleProvider
 
 	@Override
 	public String getText(Object element) {
+		if (element instanceof PatternElement) {
+			PatternElement pe = (PatternElement) element;
+			return pe.getName();
+		}
 		if (element instanceof MyNode) {
 			MyNode myNode = (MyNode) element;
 			return myNode.getName();
