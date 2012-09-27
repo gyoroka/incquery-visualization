@@ -25,9 +25,11 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.zest.core.viewers.GraphViewer;
 import org.eclipse.zest.core.widgets.ZestStyles;
 import org.eclipse.zest.layouts.LayoutStyles;
+import org.eclipse.zest.layouts.algorithms.BoxLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.GridLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
+import org.eclipse.zest.layouts.algorithms.SugiyamaLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 
 public class GraphView extends ViewPart{
@@ -67,16 +69,23 @@ public class GraphView extends ViewPart{
 	public void createPartControl(Composite parent) {
 		
 		SashForm form=new SashForm(parent,SWT.NONE);
-		Composite callMenu=new Composite(form,SWT.PUSH);
+		//Composite callMenu=new Composite(form,SWT.PUSH);
 		callGraphViewer = new GraphViewer(form, SWT.NONE);
 		contentGraphViewer = new GraphViewer(form, SWT.NONE);
-		Composite contentMenu=new Composite(form,SWT.PUSH);
+		//Composite contentMenu=new Composite(form,SWT.PUSH);
 		
 		
 	    
 		callGraphViewer.setContentProvider(new CallGraphViewContentProvider());
 		callGraphViewer.setLabelProvider(new CallGraphLabelProvider());
-		callGraphViewer.setLayoutAlgorithm(new SpringLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING),true);
+		//SpringLayoutAlgorithm2 sla=new SpringLayoutAlgorithm2(LayoutStyles.NO_LAYOUT_NODE_RESIZING);
+		SugiyamaLayoutAlgorithm2 sla=new SugiyamaLayoutAlgorithm2();
+		//sla.setSpringStrain(0.1);
+		//sla.setSpringGravitation(0.1);
+		//sla.setSpringLength(20.0);
+		//sla.setSpringGravitation(5.0);
+		callGraphViewer.setLayoutAlgorithm(new SugiyamaLayoutAlgorithm2(),true);
+		//callGraphViewer.setLayoutAlgorithm(new SpringLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING),true);
 		callGraphViewer.applyLayout();
 		callGraphViewer.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
 		callGraphViewer.addSelectionChangedListener( new ISelectionChangedListener(){
@@ -103,10 +112,11 @@ public class GraphView extends ViewPart{
 		contentGraphViewer.setContentProvider(new ContentGraphViewContentProvider());
 		contentGraphViewer.setLabelProvider(new ContentGraphLabelProvider());
 		contentGraphViewer.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
-		contentGraphViewer.setLayoutAlgorithm(new SpringLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING),true);
+		contentGraphViewer.setLayoutAlgorithm(sla, true);
+		//contentGraphViewer.setLayoutAlgorithm(new SugiyamaLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING),true);
 		contentGraphViewer.applyLayout();
 
-		int[] weight={1,4,4,1};
+		int[] weight={1,1};
 		form.addControlListener(new ControlListener(){
 
 			@Override
@@ -123,43 +133,6 @@ public class GraphView extends ViewPart{
 			}
 			
 		});
-		
-		//Button callChangeLayoutButton=new Button(callMenu);
-		callMenu.setLayout(new FillLayout(SWT.VERTICAL));
-		contentMenu.setLayout(new FillLayout(SWT.VERTICAL));
-		Button callChangeLayoutButton=new Button(callMenu,SWT.PUSH);
-		Button contentChangeLayoutButton=new Button(contentMenu,SWT.PUSH);
-		callChangeLayoutButton.setText("Change Layout");
-		contentChangeLayoutButton.setText("Change Layout");
-		callChangeLayoutButton.addSelectionListener(new SelectionListener(){
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				changeCallLayout();
-				
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-				
-			}});
-		contentChangeLayoutButton.addSelectionListener(new SelectionListener(){
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				changeContentLayout();
-				
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-				
-			}});
-		
-		
-		
 		form.setWeights(weight);
 	}
 

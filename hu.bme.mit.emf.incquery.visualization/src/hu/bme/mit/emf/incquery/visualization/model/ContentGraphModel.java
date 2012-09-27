@@ -75,12 +75,12 @@ public class ContentGraphModel {
 		MyConnection conn=new MyConnection(s,left,right);
 		left.getConnectedTo().add(conn);
 	}
-	public PatternElement addPatternComposition(PatternCall pc)
+	public PatternElement addPatternComposition(PatternCall pc,boolean count)
 	{
 		Pattern p=pc.getPatternRef();
 		List<ValueReference> srcParams=pc.getParameters();
 		List<Variable> dstParams=p.getParameters();
-		PatternElement pe=getPatternValue(p);
+		PatternElement pe=getPatternValue(p,count);
 		for (int index=0;index<srcParams.size();index++)
 		{
 			ValueReference vr=srcParams.get(index);
@@ -158,19 +158,23 @@ public class ContentGraphModel {
 		}
 		return null;
 	}
-	public PatternElement findPattern(Pattern p)
+	public PatternElement findPattern(Pattern p,boolean count)
 	{
 		String s=p.getName();
-		return findPattern(s);
-	}
-	public PatternElement findPattern(String s)
-	{
 		for (PatternElement item:patterns)
 		{
-			if (item.getName().equals(s)) return item;
+			if ( (item.getName().equals(s) && (item.getCount()==count)) ) return item;
 		}
 		return null;
 	}
+//	public PatternElement findPattern(String s)
+//	{
+//		for (PatternElement item:patterns)
+//		{
+//			if ((item.getName().equals(s)) return item;
+//		}
+//		return null;
+//	}
 	//get=creates if not found
 	private MyNode getValueNode(ValueReference vr)
 	{
@@ -236,8 +240,8 @@ public class ContentGraphModel {
 		doubles.add(node);
 		return node;
 	}
-	private PatternElement getPatternValue(Pattern pv) {
-		PatternElement node=findPattern(pv);
+	private PatternElement getPatternValue(Pattern pv,boolean count) {
+		PatternElement node=findPattern(pv,count);
 		if (node!=null) return node;
 		node = new PatternElement(pv.getName());
 		patterns.add(node);
@@ -245,7 +249,7 @@ public class ContentGraphModel {
 	}
 	private PatternElement getComputationValue(ComputationValue cv) {
 		AggregatedValue av=(AggregatedValue)cv;
-		PatternElement node=addPatternComposition(av.getCall());
+		PatternElement node=addPatternComposition(av.getCall(),true);
 		node.setCount(true);
 		//PatternElement node=findPattern(pv);
 		//if (node!=null) return node;

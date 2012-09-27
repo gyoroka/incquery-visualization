@@ -39,9 +39,10 @@ IConnectionStyleProvider, IEntityStyleProvider {
 		{
 			VariableElement ve= (VariableElement)element;
 			String s=ve.getName();
-			if (ve.getName().startsWith("_")) s=ve.getName().substring(1);
+			//if (ve.getName().startsWith("_")) s=ve.getName().substring(1);
 			if (ve.getClassifierName()!=null) 
-				return ve.getClassifierName()+"("+s+")";
+				//return ve.getClassifierName()+"("+s+")";
+				return s+":"+ve.getClassifierName();
 			else return s;
 		}
 		if (element instanceof MyNode) {
@@ -73,11 +74,11 @@ IConnectionStyleProvider, IEntityStyleProvider {
 	@Override
 	public Color getBorderColor(Object entity) {
 		// TODO Auto-generated method stub
-		if (entity instanceof VariableElement)
-		{
-			VariableElement ve= (VariableElement)entity;
-			if (ve.getName().startsWith("_")) return new Color(Display.getDefault(),100, 100, 20);
-		}
+//		if (entity instanceof VariableElement)
+//		{
+//			VariableElement ve= (VariableElement)entity;
+//			if (ve.getName().startsWith("_")) return new Color(Display.getDefault(),100, 100, 20);
+//		}
 		return null;
 	}
 
@@ -90,11 +91,11 @@ IConnectionStyleProvider, IEntityStyleProvider {
 	@Override
 	public int getBorderWidth(Object entity) {
 		// TODO Auto-generated method stub
-		if (entity instanceof VariableElement)
-		{
-			VariableElement ve= (VariableElement)entity;
-			if (ve.getName().startsWith("_")) return 2;
-		}
+//		if (entity instanceof VariableElement)
+//		{
+//			VariableElement ve= (VariableElement)entity;
+//			if (ve.getName().startsWith("_")) return 2;
+//		}
 		return 0;
 	}
 
@@ -105,6 +106,7 @@ IConnectionStyleProvider, IEntityStyleProvider {
 		{
 			VariableElement ve=(VariableElement)entity;
 			if (ve.isParameter()) return new Color(Display.getDefault(),100,150,250);
+			if (ve.getName().startsWith("_")) return new Color(Display.getDefault(),175,175,175);
 		}
 		return null;
 	}
@@ -112,12 +114,19 @@ IConnectionStyleProvider, IEntityStyleProvider {
 	@Override
 	public Color getForegroundColour(Object entity) {
 		// TODO Auto-generated method stub
+		if (entity instanceof VariableElement)
+		{
+			VariableElement ve=(VariableElement)entity;
+			if (ve.isParameter()) return new Color(Display.getDefault(),205,255,205);
+			if (ve.getName().startsWith("_")) return new Color(Display.getDefault(),255,255,255);
+		}
 		return null;
 	}
 
 	@Override
 	public boolean fisheyeNode(Object entity) {
 		// TODO Auto-generated method stub
+		//if (entity instanceof VariableElement) return true;
 		return false;
 	}
 
@@ -141,8 +150,8 @@ IConnectionStyleProvider, IEntityStyleProvider {
 	@Override
 	public Color getHighlightColor(Object rel) {
 		// TODO Auto-generated method stub
-		//return new Color(Display.getDefault(),255, 0, 0);
-		return null;
+		return new Color(Display.getDefault(),200, 200, 50);
+		//return null;
 	}
 
 	@Override

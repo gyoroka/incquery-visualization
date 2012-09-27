@@ -106,7 +106,7 @@ IConnectionStyleProvider, IEntityStyleProvider
 	@Override
 	public Color getHighlightColor(Object rel) {
 		// TODO Auto-generated method stub
-		return null;
+		return new Color(Display.getDefault(), new RGB(0, 255, 0));
 	}
 
 	@Override

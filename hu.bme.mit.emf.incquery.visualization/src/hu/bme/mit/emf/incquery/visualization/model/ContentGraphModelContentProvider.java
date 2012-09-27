@@ -98,7 +98,7 @@ public class ContentGraphModelContentProvider {
 	{
 		PatternCall pc=pcc.getCall();
 		//Pattern p=pc.getPatternRef();
-		cgm.addPatternComposition(pc);
+		cgm.addPatternComposition(pc,false);
 	}
 	
 	private String getTail(PathExpressionTail pet)
