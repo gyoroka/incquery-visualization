@@ -122,8 +122,9 @@ IConnectionStyleProvider, IEntityStyleProvider {
 	public Color getBackgroundColour(Object entity) {
 		if (entity instanceof AggregatedElement)
 		{
-			if (((AggregatedElement) entity).isNegative()) return Settings.Colors.aggregatedNeg;
-			else return Settings.Colors.aggregated;
+			//if (((AggregatedElement) entity).isNegative()) return Settings.Colors.aggregatedNeg;
+			//else 
+				return Settings.Colors.aggregated;
 		}
 		if (entity instanceof PatternElement)
 		{
@@ -141,16 +142,17 @@ IConnectionStyleProvider, IEntityStyleProvider {
 
 	@Override
 	public Color getForegroundColour(Object entity) {
-//		if (entity instanceof AggregatedElement)
-//		{
-//			if (((AggregatedElement) entity).isNegative()) return Settings.Colors.aggregatedNeg;
-//			else return Settings.Colors.aggregated;
-//		}
-//		if (entity instanceof PatternElement)
-//		{
-//			if (((PatternElement) entity).isNegative()) return Settings.Colors.findNeg;
-//			else return Settings.Colors.find;
-//		}
+		if (entity instanceof AggregatedElement)
+		{
+			//if (((AggregatedElement) entity).isNegative()) return Settings.Colors.aggregatedNegForeground;
+			//else 
+				return Settings.Colors.aggregatedForeground;
+		}
+		if (entity instanceof PatternElement)
+		{
+			if (((PatternElement) entity).isNegative()) return Settings.Colors.findNegForeground;
+			else return Settings.Colors.findForeground;
+		}
 		if (entity instanceof VariableElement)
 		{
 			VariableElement ve=(VariableElement)entity;

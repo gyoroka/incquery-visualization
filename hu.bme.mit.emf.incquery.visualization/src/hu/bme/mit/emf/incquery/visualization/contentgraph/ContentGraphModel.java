@@ -72,22 +72,22 @@ public class ContentGraphModel {
 		//VariableElement ve= new VariableElement(v.getName());
 		//variables.add(ve);		
 	}
-	public void addPathExpression(VariableReference varr, ValueReference valr,String head,String tail) 
+	public void addPathExpression(VariableReference varr, ValueReference valr,String tail) 
 	{
 		//System.out.println(s);
 		// TODO Auto-generated method stub
 		Variable src=varr.getVariable();
 		MyNode snode=findVariable(src);
 		MyNode dnode=getValueNode(valr);
-		VariableElement varnode=(VariableElement)snode;
-		if (varnode.getClassifierName()==null) varnode.setClassifierName(head);
+		//VariableElement varnode=(VariableElement)snode;
+		//if (varnode.getClassifierName()==null) varnode.setClassifierName(head);
 		MyConnection conn=new MyConnection(tail,snode,dnode);
 		snode.getConnectedTo().add(conn);
 	}
-	public void addClassifier(String cln,String name)
-	{
-		findVariable(name).setClassifierName(cln);
-	}
+//	public void addClassifier(String cln,String name)
+//	{
+//		findVariable(name).setClassifierName(cln);
+//	}
 	public void addCompare(ValueReference vl,ValueReference vr, String s)
 	{
 		MyNode left=getValueNode(vl);
@@ -127,12 +127,12 @@ public class ContentGraphModel {
 		aggregateds.add(node);
 		return node;
 	}
-	public PatternElement addPatternComposition(PatternCall pc)
+	public PatternElement addPatternComposition(PatternCall pc,boolean negative)
 	{
 		Pattern p=pc.getPatternRef();
 		List<ValueReference> srcParams=pc.getParameters();
 		List<Variable> dstParams=p.getParameters();
-		PatternElement pe=addPatternValue(p);
+		PatternElement pe=addPatternValue(p,negative);
 		for (int index=0;index<srcParams.size();index++)
 		{
 			ValueReference vr=srcParams.get(index);
@@ -149,8 +149,8 @@ public class ContentGraphModel {
 		}
 		return pe;
 	}
-	private PatternElement addPatternValue(Pattern p) {
-		PatternElement node = new PatternElement(p.getName());
+	private PatternElement addPatternValue(Pattern p,boolean negative) {
+		PatternElement node = new PatternElement(p.getName(),negative);
 		patterns.add(node);
 		return node;
 	}

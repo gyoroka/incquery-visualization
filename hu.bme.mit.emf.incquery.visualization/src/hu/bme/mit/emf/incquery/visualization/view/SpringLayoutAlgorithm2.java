@@ -53,7 +53,7 @@ public class SpringLayoutAlgorithm2 implements LayoutAlgorithm {
 	/**
 	 * the default value for the time algorithm runs.
 	 */
-	public static final long MAX_SPRING_TIME = 20000;//10000;
+	public static final long MAX_SPRING_TIME = 10000;
 
 	/**
 	 * The default value for positioning nodes randomly.
@@ -73,7 +73,7 @@ public class SpringLayoutAlgorithm2 implements LayoutAlgorithm {
 	/**
 	 * The default value for the spring layout length-control.
 	 */
-	public static final double DEFAULT_SPRING_LENGTH = 50f;//3.0f;
+	public static final double DEFAULT_SPRING_LENGTH = 3.0f;
 
 	/**
 	 * The default value for the spring layout gravitation-control.

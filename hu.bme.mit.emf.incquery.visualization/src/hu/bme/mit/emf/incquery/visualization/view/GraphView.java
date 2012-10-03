@@ -11,6 +11,8 @@ import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 import javax.swing.JButton;
 
 import org.eclipse.draw2d.FlowLayout;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -24,6 +26,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
@@ -123,6 +126,18 @@ public class GraphView extends ViewPart{
 			
 		});
 		form.setWeights(weight);
+		
+
+		  
+		getViewSite().getActionBars().getMenuManager().add(new SpringAction());
+		getViewSite().getActionBars().getMenuManager().add(new TreeAction());
+		getViewSite().getActionBars().getMenuManager().add(new RadialAction());
+		getViewSite().getActionBars().getMenuManager().add(new GridAction());
+		getViewSite().getActionBars().getMenuManager().add(new Separator()); 
+		getViewSite().getActionBars().getMenuManager().add(new HorizontalSugiyamaAction());
+		getViewSite().getActionBars().getMenuManager().add(new VerticalSugiyamaAction());
+
+		
 	}
 
 	@Override
@@ -133,5 +148,70 @@ public class GraphView extends ViewPart{
 
 
 
-
+	public class SpringAction extends Action implements IWorkbenchAction{  
+		public SpringAction(){ 
+			super();
+			setText("Spring Layout");
+		}  
+		public void run() {  
+			contentGraphViewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
+			contentGraphViewer.applyLayout();
+		}  
+		public void dispose() {}  
+		}  
+	public class TreeAction extends Action implements IWorkbenchAction{  
+		public TreeAction(){ 
+			super();
+			setText("Tree Layout");
+		}  
+		public void run() {  
+			contentGraphViewer.setLayoutAlgorithm(new TreeLayoutAlgorithm());
+			contentGraphViewer.applyLayout();
+		}  
+		public void dispose() {}  
+		} 
+	public class RadialAction extends Action implements IWorkbenchAction{  
+		public RadialAction(){ 
+			super();
+			setText("Radial Layout");
+		}  
+		public void run() {  
+			contentGraphViewer.setLayoutAlgorithm(new RadialLayoutAlgorithm());
+			contentGraphViewer.applyLayout();
+		}  
+		public void dispose() {}  
+		} 
+	public class GridAction extends Action implements IWorkbenchAction{  
+		public GridAction(){ 
+			super();
+			setText("Grid Layout");
+		}  
+		public void run() {  
+			contentGraphViewer.setLayoutAlgorithm(new GridLayoutAlgorithm());
+			contentGraphViewer.applyLayout();
+		}  
+		public void dispose() {}  
+		} 
+	public class HorizontalSugiyamaAction extends Action implements IWorkbenchAction{  
+		public HorizontalSugiyamaAction(){ 
+			super();
+			setText("Custom Horizontal Sugiyama Layout");
+		}  
+		public void run() {  
+			contentGraphViewer.setLayoutAlgorithm(new SugiyamaLayoutAlgorithm2(1));
+			contentGraphViewer.applyLayout();
+		}  
+		public void dispose() {}  
+		} 
+	public class VerticalSugiyamaAction extends Action implements IWorkbenchAction{  
+		public VerticalSugiyamaAction(){ 
+			super();
+			setText("Custom Vertical Sugiyama Layout");
+		}  
+		public void run() {  
+			contentGraphViewer.setLayoutAlgorithm(new SugiyamaLayoutAlgorithm2());
+			contentGraphViewer.applyLayout();
+		}  
+		public void dispose() {}  
+		} 
 }

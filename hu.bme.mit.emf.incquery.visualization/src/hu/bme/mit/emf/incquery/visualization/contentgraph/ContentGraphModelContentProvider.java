@@ -56,7 +56,7 @@ public class ContentGraphModelContentProvider {
 	public void add(Constraint c)
 	{
 		if (c instanceof PathExpressionConstraint) add((PathExpressionConstraint)c);
-		if (c instanceof EClassifierConstraint) add((EClassifierConstraint)c);
+		//if (c instanceof EClassifierConstraint) add((EClassifierConstraint)c);
 		if (c instanceof CompareConstraint) add((CompareConstraint)c);
 		if (c instanceof PatternCompositionConstraint) add((PatternCompositionConstraint)c);
 		
@@ -64,35 +64,35 @@ public class ContentGraphModelContentProvider {
 	public void add(PathExpressionConstraint pec)
 	{
 		PathExpressionHead peh=pec.getHead();
-		String head="";
+		//String head="";
 		String tail="";
-		Type t=peh.getType();
-		ClassType ct;
-		if (t instanceof RelationType)
-		{
-			RelationType rt=(RelationType)t;
-			ReferenceType rft=(ReferenceType)rt;
-			head=rft.getRefname().getName();
-		}
-		if (t instanceof EntityType)
-		{
-			EntityType et=(EntityType)t;
-			ct=(ClassType)et;
-			head=ct.getClassname().getName();
-		}
+//		Type t=peh.getType();
+//		ClassType ct;
+//		if (t instanceof RelationType)
+//		{
+//			RelationType rt=(RelationType)t;
+//			ReferenceType rft=(ReferenceType)rt;
+//			//head=rft.getRefname().getName();
+//		}
+//		if (t instanceof EntityType)
+//		{
+//			EntityType et=(EntityType)t;
+//			ct=(ClassType)et;
+//			//head=ct.getClassname().getName();
+//		}
 		if (peh.getTail()!=null)
 		{
 			tail+="."+getTail(peh.getTail());
 		}
 		if (tail.startsWith(".")) tail=tail.substring(1);
 		ValueReference vr=peh.getDst();
-		cgm.addPathExpression(peh.getSrc(),vr,head,tail);
+		cgm.addPathExpression(peh.getSrc(),vr,tail);
 	}
-	public void add(EClassifierConstraint ecc) 
-	{
-		ClassType ct=(ClassType)ecc.getType();
-		cgm.addClassifier(ct.getClassname().getName(),ecc.getVar().getVariable().getName());
-	}
+//	public void add(EClassifierConstraint ecc) 
+//	{
+//		ClassType ct=(ClassType)ecc.getType();
+//		cgm.addClassifier(ct.getClassname().getName(),ecc.getVar().getVariable().getName());
+//	}
 	public void add(CompareConstraint cc)
 	{
 		String s=cc.getFeature().getLiteral();
@@ -102,7 +102,7 @@ public class ContentGraphModelContentProvider {
 	{
 		PatternCall pc=pcc.getCall();
 		//Pattern p=pc.getPatternRef();
-		cgm.addPatternComposition(pc);
+		cgm.addPatternComposition(pc,pcc.isNegative());
 	}
 	
 	private String getTail(PathExpressionTail pet)

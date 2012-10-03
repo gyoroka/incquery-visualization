@@ -101,14 +101,11 @@ IConnectionStyleProvider, IEntityStyleProvider
 		// TODO Auto-generated method stub
 		if (rel instanceof AggregatedConnection) 
 		{
-			if (((AggregatedConnection) rel).isNegative())
-			{
-				return Settings.Colors.aggregatedNeg;
-			}
-			else 
-			{
+//			if (((AggregatedConnection) rel).isNegative())
+//				return Settings.Colors.aggregatedNeg;
+//				else
 				return Settings.Colors.aggregated;
-			}
+			
 		}
 		if (rel instanceof MyConnection)
 		{
