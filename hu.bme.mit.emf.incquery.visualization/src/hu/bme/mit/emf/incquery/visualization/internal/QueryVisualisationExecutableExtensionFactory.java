@@ -1,10 +1,10 @@
 package hu.bme.mit.emf.incquery.visualization.internal;
 
-import org.eclipse.xtext.ui.XtextExecutableExtensionFactory;
+import org.eclipse.viatra2.patternlanguage.ui.EMFPatternLanguageExecutableExtensionFactory;
 import org.osgi.framework.Bundle;
 
 public class QueryVisualisationExecutableExtensionFactory extends
-		XtextExecutableExtensionFactory {
+		EMFPatternLanguageExecutableExtensionFactory {
 
 	@Override
 	protected Bundle getBundle() {

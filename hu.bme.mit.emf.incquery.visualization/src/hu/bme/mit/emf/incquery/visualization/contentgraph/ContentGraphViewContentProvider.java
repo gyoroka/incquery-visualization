@@ -1,4 +1,4 @@
-package hu.bme.mit.emf.incquery.visualization.view;
+package hu.bme.mit.emf.incquery.visualization.contentgraph;
 
 import hu.bme.mit.emf.incquery.visualization.model.MyConnection;
 import hu.bme.mit.emf.incquery.visualization.model.MyNode;
@@ -21,9 +21,9 @@ public class ContentGraphViewContentProvider extends ArrayContentProvider implem
 			{
 					if (c.getDestination().equals(dest)) 
 					{
-						MyConnection conn=new MyConnection(c.getLabel(),c.getSource(),c.getDestination());
-						if (c.isNegative()) conn.setNegative(true);
-						retcon.add(conn);
+//						MyConnection conn=new MyConnection(c.getLabel(),c.getSource(),c.getDestination());
+//						if (c.isNegative()) conn.setNegative(true);
+						retcon.add(c);
 					}
 			}
 			return retcon.toArray();

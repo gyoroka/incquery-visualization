@@ -1,4 +1,6 @@
-package hu.bme.mit.emf.incquery.visualization.model;
+package hu.bme.mit.emf.incquery.visualization.callgraph;
+
+import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 
 import java.util.Iterator;
 import java.util.List;
@@ -67,7 +69,7 @@ public class CallGraphModelContentProvider {
 		if (vr instanceof ComputationValue)
 		{
 			AggregatedValue ag=(AggregatedValue)vr;
-			cgm.addPatternCall(p,ag.getCall(),false,index);
+			cgm.addAggregatedCall(p,ag.getCall(),false,index);
 		}
 	}
 	private void add(Pattern p,CompareConstraint cc,int index)

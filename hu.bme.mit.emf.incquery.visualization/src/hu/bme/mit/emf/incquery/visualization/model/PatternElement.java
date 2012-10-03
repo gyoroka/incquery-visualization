@@ -9,11 +9,18 @@ public class PatternElement extends MyNode {
 
 	private Pattern pattern;
 	private List<String> parameters;
-	private boolean count=false;
+	private boolean negative;
 	
 	public PatternElement(String name) {
 		super(name);
 		parameters=new ArrayList<String>();
+		negative=false;
+	}
+	public PatternElement(String name,boolean b)
+	{
+		super(name);
+		parameters=new ArrayList<String>();
+		negative=b;
 	}
 	public PatternElement(String name,Pattern p) {
 		super(name);
@@ -29,12 +36,12 @@ public class PatternElement extends MyNode {
 	{
 		return pattern;
 	}
-	public void setCount(boolean b)
+	public void setNegative(boolean b)
 	{
-		count=b;
+		negative=b;
 	}
-	public boolean getCount()
+	public boolean isNegative()
 	{
-		return count;
+		return negative;
 	}
 }

@@ -1,4 +1,8 @@
-package hu.bme.mit.emf.incquery.visualization.model;
+package hu.bme.mit.emf.incquery.visualization.callgraph;
+
+import hu.bme.mit.emf.incquery.visualization.model.AggregatedConnection;
+import hu.bme.mit.emf.incquery.visualization.model.MyConnection;
+import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,30 +55,20 @@ public class CallGraphModel {
 			if ((item.getLabel().equals(conn.getLabel()))&&(dst.getName().equals(item.getDestination().getName()))) l=true;
 		}
 		if (!l) src.getConnectedTo().add(conn);
-//		boolean l=false;
-//		MyNode tmppattern=pattern;
-//		for (MyNode n:patterns)
-//		{
-//			if (n.getName().equals(pattern.getName())) 
-//			{
-//				l=true;
-//				tmppattern=n;
-//			}
-//		}
-//		if (!l) patterns.add(pattern);
 	}
-//	public void addBodie(MyNode body,MyNode pattern)
-//	{
-//		bodies.add(body);
-//		for (MyNode n:patterns)
-//		{
-//			if (n.equals(pattern)) 
-//			{
-//				MyConnection conn=new MyConnection(body.getName(),pattern,body);
-//				pattern.getConnectedTo().add(conn);
-//			}
-//		}
-//	}
+	public void addAggregatedCall(Pattern p,PatternCall pc,boolean b,int index)
+	{
+		PatternElement src=getPattern(p);
+		PatternElement dst=getPattern(pc.getPatternRef());
+		AggregatedConnection conn=new AggregatedConnection("Body: "+index,src,dst);
+		conn.setNegative(b);
+		boolean l=false;
+		for (MyConnection item:src.getConnectedTo())
+		{
+			if ((item.getLabel().equals(conn.getLabel()))&&(dst.getName().equals(item.getDestination().getName()))) l=true;
+		}
+		if (!l) src.getConnectedTo().add(conn);
+	}
 	private PatternElement findPattern(Pattern p)
 	{
 		for (PatternElement pe:patterns)

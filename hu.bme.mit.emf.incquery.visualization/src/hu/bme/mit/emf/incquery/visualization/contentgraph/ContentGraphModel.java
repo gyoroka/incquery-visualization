@@ -1,8 +1,15 @@
-package hu.bme.mit.emf.incquery.visualization.model;
+package hu.bme.mit.emf.incquery.visualization.contentgraph;
+
+import hu.bme.mit.emf.incquery.visualization.model.AggregatedElement;
+import hu.bme.mit.emf.incquery.visualization.model.MyConnection;
+import hu.bme.mit.emf.incquery.visualization.model.MyNode;
+import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
+import hu.bme.mit.emf.incquery.visualization.model.VariableElement;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AggregatedValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ComputationValue;
@@ -16,12 +23,15 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
+import org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider;
 
 public class ContentGraphModel {
 	//public List<MyNode> parameters;
 	private List<VariableElement> variables;
 	private List<PatternElement> patterns;
+	private List<AggregatedElement> aggregateds;
 	private List<MyNode> ints,strings,bools,doubles;
+	private IEMFTypeProvider iEMFTypeProvider;
 	public List<MyNode> getNodes() {
 		List<MyNode> tmp=new ArrayList<MyNode>();
 		//tmp.addAll(parameters);
@@ -31,9 +41,10 @@ public class ContentGraphModel {
 		tmp.addAll(bools);
 		tmp.addAll(doubles);
 		tmp.addAll(patterns);
+		tmp.addAll(aggregateds);
 		return tmp;
 	}
-	public ContentGraphModel()
+	public ContentGraphModel(IEMFTypeProvider iEMFTypeProvider0)
 	{
 		variables=new ArrayList<VariableElement>();
 		ints=new ArrayList<MyNode>();
@@ -41,14 +52,23 @@ public class ContentGraphModel {
 		bools=new ArrayList<MyNode>();
 		doubles=new ArrayList<MyNode>();
 		patterns=new ArrayList<PatternElement>();
+		aggregateds=new ArrayList<AggregatedElement>();
+		iEMFTypeProvider=iEMFTypeProvider0;
 	}
 	public void addParameter(Variable v)
 	{
 		VariableElement ve= new VariableElement(v.getName(),true);
+		EClassifier eclass=iEMFTypeProvider.getClassifierForVariable(v);
+		if (eclass!=null) ve.setClassifierName(eclass.getName());
 		variables.add(ve);
 	}
 	public void addVariable(Variable v) {
-		getVariable(v);
+		VariableElement ve=getVariable(v);
+		EClassifier eclass=iEMFTypeProvider.getClassifierForVariable(v);
+		if ((ve.getClassifierName()==null)&&(eclass!=null)) 
+		{
+			ve.setClassifierName(eclass.getName());
+		}
 		//VariableElement ve= new VariableElement(v.getName());
 		//variables.add(ve);		
 	}
@@ -75,12 +95,44 @@ public class ContentGraphModel {
 		MyConnection conn=new MyConnection(s,left,right);
 		left.getConnectedTo().add(conn);
 	}
-	public PatternElement addPatternComposition(PatternCall pc,boolean count)
+	private PatternElement addComputationValue(ComputationValue cv) {
+		AggregatedValue av=(AggregatedValue)cv;
+		AggregatedElement node=addAggregatedComposition(av.getCall());
+		return node;
+	}
+	public AggregatedElement addAggregatedComposition(PatternCall pc)
 	{
 		Pattern p=pc.getPatternRef();
 		List<ValueReference> srcParams=pc.getParameters();
 		List<Variable> dstParams=p.getParameters();
-		PatternElement pe=getPatternValue(p,count);
+		AggregatedElement ae=addAggregatedValue(p);
+		for (int index=0;index<srcParams.size();index++)
+		{
+			ValueReference vr=srcParams.get(index);
+			MyNode src=getValueNode(vr);
+			String varName=dstParams.get(index).getName();
+			boolean l=false;
+			for (String parString:ae.getParameters())
+			{
+				if (parString.equals(varName)) l=true;
+			}
+			if (!l) ae.getParameters().add(varName);
+			MyConnection conn=new MyConnection(varName,src,ae);
+			src.getConnectedTo().add(conn);
+		}
+		return ae;
+	}
+	private AggregatedElement addAggregatedValue(Pattern p) {
+		AggregatedElement node = new AggregatedElement(p.getName());
+		aggregateds.add(node);
+		return node;
+	}
+	public PatternElement addPatternComposition(PatternCall pc)
+	{
+		Pattern p=pc.getPatternRef();
+		List<ValueReference> srcParams=pc.getParameters();
+		List<Variable> dstParams=p.getParameters();
+		PatternElement pe=addPatternValue(p);
 		for (int index=0;index<srcParams.size();index++)
 		{
 			ValueReference vr=srcParams.get(index);
@@ -97,6 +149,13 @@ public class ContentGraphModel {
 		}
 		return pe;
 	}
+	private PatternElement addPatternValue(Pattern p) {
+		PatternElement node = new PatternElement(p.getName());
+		patterns.add(node);
+		return node;
+	}
+	
+	
 	//find=null if not found
 	public VariableElement findVariable(Variable v)
 	{
@@ -158,12 +217,12 @@ public class ContentGraphModel {
 		}
 		return null;
 	}
-	public PatternElement findPattern(Pattern p,boolean count)
+	public PatternElement findPatternElement(Pattern p)
 	{
 		String s=p.getName();
 		for (PatternElement item:patterns)
 		{
-			if ( (item.getName().equals(s) && (item.getCount()==count)) ) return item;
+			if ( item.getName().equals(s) ) return item;
 		}
 		return null;
 	}
@@ -189,7 +248,7 @@ public class ContentGraphModel {
 			if (lvr instanceof BoolValue) node=getBoolValue((BoolValue)lvr);
 			if (lvr instanceof DoubleValue) node=getDoubleValue((DoubleValue)lvr);
 		}
-		if (vr instanceof ComputationValue) node=getComputationValue((ComputationValue)vr);
+		if (vr instanceof ComputationValue) node=addComputationValue((ComputationValue)vr);
 		return node;
 	}
 	private VariableElement getVariable(Variable v)
@@ -240,24 +299,14 @@ public class ContentGraphModel {
 		doubles.add(node);
 		return node;
 	}
-	private PatternElement getPatternValue(Pattern pv,boolean count) {
-		PatternElement node=findPattern(pv,count);
-		if (node!=null) return node;
-		node = new PatternElement(pv.getName());
-		patterns.add(node);
-		return node;
-	}
-	private PatternElement getComputationValue(ComputationValue cv) {
-		AggregatedValue av=(AggregatedValue)cv;
-		PatternElement node=addPatternComposition(av.getCall(),true);
-		node.setCount(true);
-		//PatternElement node=findPattern(pv);
-		//if (node!=null) return node;
-		//node = new PatternElement(pv.getName());
-		//patterns.add(node);
-		return node;
-		//return null;
-	}
+//	private PatternElement getPatternValue(Pattern pv) {
+//		PatternElement node=findPatternElement(pv);
+//		if (node!=null) return node;
+//		node = new PatternElement(pv.getName());
+//		patterns.add(node);
+//		return node;
+//	}
+
 	
 	
 

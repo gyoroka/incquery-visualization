@@ -1,4 +1,6 @@
-package hu.bme.mit.emf.incquery.visualization.model;
+package hu.bme.mit.emf.incquery.visualization.contentgraph;
+
+import hu.bme.mit.emf.incquery.visualization.model.MyNode;
 
 import java.util.List;
 
@@ -21,6 +23,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ReferenceType;
+import org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider;
 
 public class ContentGraphModelContentProvider {
 	private ContentGraphModel cgm;
@@ -28,9 +31,9 @@ public class ContentGraphModelContentProvider {
 	{
 		return cgm.getNodes();
 	}
-	public ContentGraphModelContentProvider(Pattern pattern)
+	public ContentGraphModelContentProvider(Pattern pattern, IEMFTypeProvider iEMFTypeProvider)
 	{
-		cgm= new ContentGraphModel();
+		cgm= new ContentGraphModel(iEMFTypeProvider);
 		for (Variable p:pattern.getParameters())
 		{
 			cgm.addParameter(p);
@@ -81,6 +84,7 @@ public class ContentGraphModelContentProvider {
 		{
 			tail+="."+getTail(peh.getTail());
 		}
+		if (tail.startsWith(".")) tail=tail.substring(1);
 		ValueReference vr=peh.getDst();
 		cgm.addPathExpression(peh.getSrc(),vr,head,tail);
 	}
@@ -98,7 +102,7 @@ public class ContentGraphModelContentProvider {
 	{
 		PatternCall pc=pcc.getCall();
 		//Pattern p=pc.getPatternRef();
-		cgm.addPatternComposition(pc,false);
+		cgm.addPatternComposition(pc);
 	}
 	
 	private String getTail(PathExpressionTail pet)

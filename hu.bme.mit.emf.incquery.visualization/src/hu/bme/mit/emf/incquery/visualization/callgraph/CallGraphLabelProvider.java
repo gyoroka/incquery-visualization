@@ -1,8 +1,11 @@
-package hu.bme.mit.emf.incquery.visualization.view;
+package hu.bme.mit.emf.incquery.visualization.callgraph;
 
+import hu.bme.mit.emf.incquery.visualization.model.AggregatedConnection;
 import hu.bme.mit.emf.incquery.visualization.model.MyConnection;
 import hu.bme.mit.emf.incquery.visualization.model.MyNode;
 import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
+import hu.bme.mit.emf.incquery.visualization.view.Settings;
+import hu.bme.mit.emf.incquery.visualization.view.Settings.Colors;
 
 import org.eclipse.draw2d.ConnectionRouter;
 import org.eclipse.draw2d.IFigure;
@@ -13,6 +16,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.zest.core.viewers.EntityConnectionData;
 import org.eclipse.zest.core.viewers.IConnectionStyleProvider;
 import org.eclipse.zest.core.viewers.IEntityStyleProvider;
+import org.eclipse.zest.core.widgets.ZestStyles;
 
 public class CallGraphLabelProvider extends LabelProvider implements
 IConnectionStyleProvider, IEntityStyleProvider
@@ -88,25 +92,36 @@ IConnectionStyleProvider, IEntityStyleProvider
 	@Override
 	public int getConnectionStyle(Object rel) {
 		// TODO Auto-generated method stub
+		if (rel instanceof AggregatedConnection) return ZestStyles.CONNECTIONS_DOT;
 		return 0;
 	}
 
 	@Override
 	public Color getColor(Object rel) {
 		// TODO Auto-generated method stub
-		Color color=null;
+		if (rel instanceof AggregatedConnection) 
+		{
+			if (((AggregatedConnection) rel).isNegative())
+			{
+				return Settings.Colors.aggregatedNeg;
+			}
+			else 
+			{
+				return Settings.Colors.aggregated;
+			}
+		}
 		if (rel instanceof MyConnection)
 		{
 			MyConnection conn=(MyConnection)rel;
-			if (conn.isNegative()) color = new Color(Display.getDefault(), new RGB(255, 0, 0));
+			if (conn.isNegative()) return Settings.Colors.findNeg;
 		}
-		return color;
+		return Settings.Colors.defaultRel;
 	}
 
 	@Override
 	public Color getHighlightColor(Object rel) {
 		// TODO Auto-generated method stub
-		return new Color(Display.getDefault(), new RGB(0, 255, 0));
+		return Settings.Colors.defaultRelHighlight;
 	}
 
 	@Override
