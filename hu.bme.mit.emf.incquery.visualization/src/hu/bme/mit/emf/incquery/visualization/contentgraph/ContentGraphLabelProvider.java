@@ -6,21 +6,30 @@ import hu.bme.mit.emf.incquery.visualization.model.MyNode;
 import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 import hu.bme.mit.emf.incquery.visualization.model.VariableElement;
 import hu.bme.mit.emf.incquery.visualization.view.Settings;
-import hu.bme.mit.emf.incquery.visualization.view.Settings.Colors;
 
+import org.eclipse.draw2d.Connection;
 import org.eclipse.draw2d.ConnectionRouter;
+import org.eclipse.draw2d.Ellipse;
+import org.eclipse.draw2d.EllipseAnchor;
+import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.StackLayout;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.zest.core.viewers.EntityConnectionData;
 import org.eclipse.zest.core.viewers.IConnectionStyleProvider;
 import org.eclipse.zest.core.viewers.IEntityStyleProvider;
-import org.eclipse.zest.core.viewers.IGraphContentProvider;
+import org.eclipse.zest.core.viewers.IFigureProvider;
+import org.eclipse.zest.core.viewers.ISelfStyleProvider;
+import org.eclipse.zest.core.widgets.GraphConnection;
+import org.eclipse.zest.core.widgets.GraphNode;
 
 public class ContentGraphLabelProvider extends LabelProvider implements
-IConnectionStyleProvider, IEntityStyleProvider {
+IConnectionStyleProvider, IEntityStyleProvider, IFigureProvider, ISelfStyleProvider {
 	
 	@Override
 	public String getText(Object element) {
@@ -209,5 +218,83 @@ IConnectionStyleProvider, IEntityStyleProvider {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public IFigure getFigure(Object element) {
+		if (element instanceof PatternElement) return null;
+		if (element instanceof VariableElement) 
+		{
+			VariableElement v = (VariableElement) element;
+			String s="";
+			if (v.isTemporary()) s+=v.getName().substring(1);
+			else s+=v.getName();
+			if (v.getClassifierName()!=null) s+=" : "+v.getClassifierName();
+			MyNodeFigure f = new MyNodeFigure(s);
+			if (v.isParameter()) 
+			{
+				f.setBackgroundColor(Settings.Colors.paramNodeBackground);
+				f.setForegroundColor(Settings.Colors.paramNodeForeground);
+				return f;
+			}
+			if (v.isTemporary()) 
+			{
+				f.setBackgroundColor(Settings.Colors.tempNodeBackground);
+				f.setForegroundColor(Settings.Colors.tempNodeForeground);
+				return f;
+			}
+			return f;
+		}
+//		if (element instanceof MyNode) {
+//			MyNode m = (MyNode) element;
+//			MyNodeFigure f = new MyNodeFigure(m.getName());
+//			//f.setSize(f.getPreferredSize());
+//			return f;
+//			}
+			return null;
+	}
+	
+	@Override
+	public void selfStyleConnection(Object element, GraphConnection connection) {
+		IFigure nodeFigure;
+		Connection connectionFigure = connection.getConnectionFigure();
+		//nodeFigure = connection.getSource().getNodeFigure();
+		nodeFigure = connection.getSource().getFigure();
+		if (nodeFigure instanceof MyNodeFigure) {
+		connectionFigure.setSourceAnchor(
+		new EllipseAnchor(nodeFigure));
+		}
+		nodeFigure = connection.getDestination().getFigure();
+		if (nodeFigure instanceof MyNodeFigure) {
+		connectionFigure.setTargetAnchor(
+		new EllipseAnchor(nodeFigure));
+		}
+		
+	}
+
+	@Override
+	public void selfStyleNode(Object element, GraphNode node) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	class MyNodeFigure extends Ellipse
+	{
+		public MyNodeFigure(String s)
+		{
+			Label l=new Label(s);
+			StackLayout layout=new StackLayout();
+			setLayoutManager(layout);
+			l.setFont(Display.getDefault().getSystemFont());
+			Dimension d=l.getPreferredSize();
+			d.height*=2;
+			d.width*=1.7;
+			setSize(d);
+			add(l);
+			setForegroundColor(Settings.Colors.nodeForeground);
+			setBackgroundColor(Settings.Colors.nodeBackground);
+		}
+	}
+
+
 
 }

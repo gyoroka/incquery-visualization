@@ -6,9 +6,11 @@ import org.eclipse.swt.widgets.Display;
 public class Settings {
 	public static class Colors {
 		
-		public static Color nodeBackground=new Color(Display.getDefault(),100,150,250);
+		public static Color nodeBackground=new Color(Display.getDefault(),20,200,200);
+		public static Color nodeForeground=new Color(Display.getDefault(),250,250,220);
+		public static Color paramNodeBackground=new Color(Display.getDefault(),100,150,250);
+		public static Color paramNodeForeground=new Color(Display.getDefault(),250,250,200);
 		public static Color tempNodeBackground=new Color(Display.getDefault(),175,175,175);
-		public static Color nodeForeground=new Color(Display.getDefault(),250,250,200);
 		public static Color tempNodeForeground=new Color(Display.getDefault(),255,255,255);
 		
 		public static Color find=new Color(Display.getDefault(),100,100,100);

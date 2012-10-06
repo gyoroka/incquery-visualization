@@ -80,7 +80,6 @@ public class GraphView extends ViewPart{
 		callGraphViewer = new GraphViewer(form, SWT.NONE);
 		//new Label(form,SWT.SEPARATOR|SWT.VERTICAL);
 		contentGraphViewer = new GraphViewer(form, SWT.NONE);
-	    
 		callGraphViewer.setContentProvider(new CallGraphViewContentProvider());
 		callGraphViewer.setLabelProvider(new CallGraphLabelProvider());
 		callGraphViewer.setLayoutAlgorithm(new SugiyamaLayoutAlgorithm2(),true);
@@ -104,7 +103,7 @@ public class GraphView extends ViewPart{
 	    
 		contentGraphViewer.setContentProvider(new ContentGraphViewContentProvider());
 		contentGraphViewer.setLabelProvider(new ContentGraphLabelProvider());
-		contentGraphViewer.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
+		//contentGraphViewer.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
 		contentGraphViewer.setLayoutAlgorithm(new SugiyamaLayoutAlgorithm2(), true);
 		contentGraphViewer.applyLayout();
 
@@ -154,7 +153,7 @@ public class GraphView extends ViewPart{
 			setText("Spring Layout");
 		}  
 		public void run() {  
-			contentGraphViewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
+			contentGraphViewer.setLayoutAlgorithm(new SpringLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING));
 			contentGraphViewer.applyLayout();
 		}  
 		public void dispose() {}  
