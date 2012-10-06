@@ -27,6 +27,7 @@ import org.eclipse.zest.core.viewers.IFigureProvider;
 import org.eclipse.zest.core.viewers.ISelfStyleProvider;
 import org.eclipse.zest.core.widgets.GraphConnection;
 import org.eclipse.zest.core.widgets.GraphNode;
+import org.eclipse.zest.core.widgets.IStyleableFigure;
 
 public class ContentGraphLabelProvider extends LabelProvider implements
 IConnectionStyleProvider, IEntityStyleProvider, IFigureProvider, ISelfStyleProvider {
@@ -272,15 +273,16 @@ IConnectionStyleProvider, IEntityStyleProvider, IFigureProvider, ISelfStyleProvi
 	}
 
 	@Override
-	public void selfStyleNode(Object element, GraphNode node) {
-		// TODO Auto-generated method stub
+	public void selfStyleNode(Object element, GraphNode node) {		
 		
 	}
 	
-	class MyNodeFigure extends Ellipse
+	class MyNodeFigure extends Ellipse implements IStyleableFigure
 	{
+		private Color borderColor;
 		public MyNodeFigure(String s)
 		{
+			super();
 			Label l=new Label(s);
 			StackLayout layout=new StackLayout();
 			setLayoutManager(layout);
@@ -292,6 +294,16 @@ IConnectionStyleProvider, IEntityStyleProvider, IFigureProvider, ISelfStyleProvi
 			add(l);
 			setForegroundColor(Settings.Colors.nodeForeground);
 			setBackgroundColor(Settings.Colors.nodeBackground);
+		}
+
+		@Override
+		public void setBorderColor(Color borderColor) {
+			this.borderColor=borderColor;
+		}
+
+		@Override
+		public void setBorderWidth(int borderWidth) {
+			setLineWidth(borderWidth);
 		}
 	}
 
