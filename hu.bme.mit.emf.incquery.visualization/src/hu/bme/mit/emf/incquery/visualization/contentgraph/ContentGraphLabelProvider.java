@@ -1,24 +1,29 @@
 package hu.bme.mit.emf.incquery.visualization.contentgraph;
 
 import hu.bme.mit.emf.incquery.visualization.model.AggregatedElement;
+import hu.bme.mit.emf.incquery.visualization.model.CheckElement;
 import hu.bme.mit.emf.incquery.visualization.model.MyConnection;
 import hu.bme.mit.emf.incquery.visualization.model.MyNode;
+import hu.bme.mit.emf.incquery.visualization.model.PathConnection;
 import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 import hu.bme.mit.emf.incquery.visualization.model.VariableElement;
 import hu.bme.mit.emf.incquery.visualization.view.Settings;
+
+import java.util.Scanner;
 
 import org.eclipse.draw2d.Connection;
 import org.eclipse.draw2d.ConnectionRouter;
 import org.eclipse.draw2d.Ellipse;
 import org.eclipse.draw2d.EllipseAnchor;
-import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.StackLayout;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.zest.core.viewers.EntityConnectionData;
 import org.eclipse.zest.core.viewers.IConnectionStyleProvider;
@@ -28,6 +33,7 @@ import org.eclipse.zest.core.viewers.ISelfStyleProvider;
 import org.eclipse.zest.core.widgets.GraphConnection;
 import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.core.widgets.IStyleableFigure;
+import org.eclipse.zest.core.widgets.ZestStyles;
 
 public class ContentGraphLabelProvider extends LabelProvider implements
 IConnectionStyleProvider, IEntityStyleProvider, IFigureProvider, ISelfStyleProvider {
@@ -45,9 +51,7 @@ IConnectionStyleProvider, IEntityStyleProvider, IFigureProvider, ISelfStyleProvi
 			}
 			s=s.substring(1);
 			s=pe.getName()+"("+s+")";
-			//return pe.getName()+"("+s+")";
 			return "count "+s;
-			//return s;
 		}
 		if (element instanceof PatternElement)
 		{
@@ -60,17 +64,14 @@ IConnectionStyleProvider, IEntityStyleProvider, IFigureProvider, ISelfStyleProvi
 			}
 			s=s.substring(1);
 			s=pe.getName()+"("+s+")";
-			//return pe.getName()+"("+s+")";
-			//if (pe.getCount()) return "count "+s;
+			if (pe.isNegative()) s="neg "+s;
 			return s;
 		}
 		if (element instanceof VariableElement)
 		{
 			VariableElement ve= (VariableElement)element;
 			String s=ve.getName();
-			//if (ve.getName().startsWith("_")) s=ve.getName().substring(1);
 			if (ve.getClassifierName()!=null) 
-				//return ve.getClassifierName()+"("+s+")";
 				return s+" : "+ve.getClassifierName();
 			else return s;
 		}
@@ -96,18 +97,12 @@ IConnectionStyleProvider, IEntityStyleProvider, IFigureProvider, ISelfStyleProvi
 	@Override
 	public Color getNodeHighlightColor(Object entity) {
 		// TODO Auto-generated method stub
-		//return new Color(Display.getDefault(),255, 0, 0);
 		return null;
 	}
 
 	@Override
 	public Color getBorderColor(Object entity) {
 		// TODO Auto-generated method stub
-//		if (entity instanceof VariableElement)
-//		{
-//			VariableElement ve= (VariableElement)entity;
-//			if (ve.getName().startsWith("_")) return new Color(Display.getDefault(),100, 100, 20);
-//		}
 		return null;
 	}
 
@@ -120,11 +115,7 @@ IConnectionStyleProvider, IEntityStyleProvider, IFigureProvider, ISelfStyleProvi
 	@Override
 	public int getBorderWidth(Object entity) {
 		// TODO Auto-generated method stub
-//		if (entity instanceof VariableElement)
-//		{
-//			VariableElement ve= (VariableElement)entity;
-//			if (ve.getName().startsWith("_")) return 2;
-//		}
+
 		return 0;
 	}
 
@@ -132,9 +123,7 @@ IConnectionStyleProvider, IEntityStyleProvider, IFigureProvider, ISelfStyleProvi
 	public Color getBackgroundColour(Object entity) {
 		if (entity instanceof AggregatedElement)
 		{
-			//if (((AggregatedElement) entity).isNegative()) return Settings.Colors.aggregatedNeg;
-			//else 
-				return Settings.Colors.aggregated;
+			return Settings.Colors.aggregated;
 		}
 		if (entity instanceof PatternElement)
 		{
@@ -154,9 +143,7 @@ IConnectionStyleProvider, IEntityStyleProvider, IFigureProvider, ISelfStyleProvi
 	public Color getForegroundColour(Object entity) {
 		if (entity instanceof AggregatedElement)
 		{
-			//if (((AggregatedElement) entity).isNegative()) return Settings.Colors.aggregatedNegForeground;
-			//else 
-				return Settings.Colors.aggregatedForeground;
+			return Settings.Colors.aggregatedForeground;
 		}
 		if (entity instanceof PatternElement)
 		{
@@ -181,7 +168,7 @@ IConnectionStyleProvider, IEntityStyleProvider, IFigureProvider, ISelfStyleProvi
 
 	@Override
 	public int getConnectionStyle(Object rel) {
-		// TODO Auto-generated method stub
+		if (rel instanceof PathConnection) return ZestStyles.CONNECTIONS_DIRECTED;
 		return 0;
 	}
 
@@ -197,7 +184,6 @@ IConnectionStyleProvider, IEntityStyleProvider, IFigureProvider, ISelfStyleProvi
 
 	@Override
 	public Color getHighlightColor(Object rel) {
-		// TODO Auto-generated method stub
 		return Settings.Colors.defaultRelHighlight;
 		//return null;
 	}
@@ -210,7 +196,24 @@ IConnectionStyleProvider, IEntityStyleProvider, IFigureProvider, ISelfStyleProvi
 
 	@Override
 	public IFigure getTooltip(Object rel) {
-		// TODO Auto-generated method stub
+		if (rel instanceof CheckElement)
+		{
+			IFigure figure=new RectangleFigure();
+			Label l=new Label(((CheckElement) rel).getHooverText());
+			StackLayout layout=new StackLayout();
+			figure.setLayoutManager(layout);
+			FontData[] fontData=Display.getDefault().getSystemFont().getFontData();
+			for (int i = 0; i < fontData.length; i++) {
+			      fontData[i].setHeight(7);
+			    }
+			Font font=new Font(Display.getDefault().getSystemFont().getDevice(),fontData);
+			l.setFont(font);
+			
+			Dimension d=l.getPreferredSize();
+			figure.setSize(d);
+			figure.add(l);
+			return figure;
+		}
 		return null;
 	}
 
@@ -222,6 +225,12 @@ IConnectionStyleProvider, IEntityStyleProvider, IFigureProvider, ISelfStyleProvi
 
 	@Override
 	public IFigure getFigure(Object element) {
+		if (element instanceof AggregatedElement)
+		{
+			AggregatedElement ae = (AggregatedElement) element;
+			MyNodeFigure f = new MyNodeFigure(getText(ae));
+			return f;
+		}
 		if (element instanceof PatternElement) return null;
 		if (element instanceof VariableElement) 
 		{
@@ -245,13 +254,7 @@ IConnectionStyleProvider, IEntityStyleProvider, IFigureProvider, ISelfStyleProvi
 			}
 			return f;
 		}
-//		if (element instanceof MyNode) {
-//			MyNode m = (MyNode) element;
-//			MyNodeFigure f = new MyNodeFigure(m.getName());
-//			//f.setSize(f.getPreferredSize());
-//			return f;
-//			}
-			return null;
+		return null;
 	}
 	
 	@Override
@@ -274,7 +277,24 @@ IConnectionStyleProvider, IEntityStyleProvider, IFigureProvider, ISelfStyleProvi
 
 	@Override
 	public void selfStyleNode(Object element, GraphNode node) {		
-		
+		if (element instanceof CheckElement)
+		{
+			Dimension d=node.getSize();
+			int h=d.height;
+			int w=d.width;
+			if (h>30) h=30;
+			if (w>100) w=100;
+			String s=((CheckElement) element).getHooverText();
+			Scanner scanner = new Scanner(s);
+			if (scanner.hasNextLine()) {
+			String line = scanner.nextLine();
+			node.setText(line);
+			scanner.close();
+			}
+			node.setSize(w, h);
+
+			
+		}
 	}
 	
 	class MyNodeFigure extends Ellipse implements IStyleableFigure
@@ -289,7 +309,7 @@ IConnectionStyleProvider, IEntityStyleProvider, IFigureProvider, ISelfStyleProvi
 			l.setFont(Display.getDefault().getSystemFont());
 			Dimension d=l.getPreferredSize();
 			d.height*=2;
-			d.width*=1.7;
+			d.width*=1.25;
 			setSize(d);
 			add(l);
 			setForegroundColor(Settings.Colors.nodeForeground);

@@ -81,7 +81,7 @@ public class CallGraphModel {
 	{
 		PatternElement pe=findPattern(p);
 		if (pe!=null) return pe;
-		pe=new PatternElement(p.getName(),p);
+		pe=new PatternElement(p.getName(),p,p);
 		patterns.add(pe);
 		return pe;
 	}

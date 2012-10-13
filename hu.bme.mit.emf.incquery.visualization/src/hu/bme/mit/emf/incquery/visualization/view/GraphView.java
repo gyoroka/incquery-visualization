@@ -1,18 +1,25 @@
 package hu.bme.mit.emf.incquery.visualization.view;
 
+import hu.bme.mit.emf.incquery.visualization.callgraph.CallGraphDoubleClickListener;
 import hu.bme.mit.emf.incquery.visualization.callgraph.CallGraphLabelProvider;
 import hu.bme.mit.emf.incquery.visualization.callgraph.CallGraphModelContentProvider;
 import hu.bme.mit.emf.incquery.visualization.callgraph.CallGraphViewContentProvider;
+import hu.bme.mit.emf.incquery.visualization.contentgraph.ContentGraphDoubleClickListener;
 import hu.bme.mit.emf.incquery.visualization.contentgraph.ContentGraphLabelProvider;
 import hu.bme.mit.emf.incquery.visualization.contentgraph.ContentGraphModelContentProvider;
 import hu.bme.mit.emf.incquery.visualization.contentgraph.ContentGraphViewContentProvider;
 import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 
 import javax.swing.JButton;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.text.TextSelection;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -26,11 +33,20 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider;
+import org.eclipse.xtext.resource.ILocationInFileProvider;
+import org.eclipse.xtext.ui.editor.XtextEditor;
+import org.eclipse.xtext.util.ITextRegion;
 import org.eclipse.zest.core.viewers.GraphViewer;
 import org.eclipse.zest.core.widgets.ZestStyles;
 import org.eclipse.zest.layouts.LayoutStyles;
@@ -52,6 +68,8 @@ public class GraphView extends ViewPart{
 //	private int contentLayoutIndex=0;
 	@Inject 
 	private IEMFTypeProvider iEMFTypeProvider;
+	@Inject
+	private ILocationInFileProvider locationProvider;
 	
 	public void setContentModel(Pattern p)
 	{
@@ -100,12 +118,13 @@ public class GraphView extends ViewPart{
 			}
 			
 		});
+		callGraphViewer.addDoubleClickListener(new CallGraphDoubleClickListener(locationProvider));
 	    
 		contentGraphViewer.setContentProvider(new ContentGraphViewContentProvider());
 		contentGraphViewer.setLabelProvider(new ContentGraphLabelProvider());
-		//contentGraphViewer.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
 		contentGraphViewer.setLayoutAlgorithm(new SugiyamaLayoutAlgorithm2(), true);
 		contentGraphViewer.applyLayout();
+		contentGraphViewer.addDoubleClickListener(new ContentGraphDoubleClickListener(locationProvider));
 
 		int[] weight={3,4};
 		form.addControlListener(new ControlListener(){

@@ -4,6 +4,7 @@ import hu.bme.mit.emf.incquery.visualization.model.MyNode;
 
 import java.util.List;
 
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CheckConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.EntityType;
@@ -33,7 +34,7 @@ public class ContentGraphModelContentProvider {
 	}
 	public ContentGraphModelContentProvider(Pattern pattern, IEMFTypeProvider iEMFTypeProvider)
 	{
-		cgm= new ContentGraphModel(iEMFTypeProvider);
+		cgm= new ContentGraphModel(iEMFTypeProvider,pattern);
 		for (Variable p:pattern.getParameters())
 		{
 			cgm.addParameter(p);
@@ -56,53 +57,44 @@ public class ContentGraphModelContentProvider {
 	public void add(Constraint c)
 	{
 		if (c instanceof PathExpressionConstraint) add((PathExpressionConstraint)c);
-		//if (c instanceof EClassifierConstraint) add((EClassifierConstraint)c);
+		if (c instanceof EClassifierConstraint) add((EClassifierConstraint)c);
 		if (c instanceof CompareConstraint) add((CompareConstraint)c);
 		if (c instanceof PatternCompositionConstraint) add((PatternCompositionConstraint)c);
+		if (c instanceof CheckConstraint) add((CheckConstraint)c);
 		
 	}
 	public void add(PathExpressionConstraint pec)
 	{
 		PathExpressionHead peh=pec.getHead();
-		//String head="";
 		String tail="";
-//		Type t=peh.getType();
-//		ClassType ct;
-//		if (t instanceof RelationType)
-//		{
-//			RelationType rt=(RelationType)t;
-//			ReferenceType rft=(ReferenceType)rt;
-//			//head=rft.getRefname().getName();
-//		}
-//		if (t instanceof EntityType)
-//		{
-//			EntityType et=(EntityType)t;
-//			ct=(ClassType)et;
-//			//head=ct.getClassname().getName();
-//		}
 		if (peh.getTail()!=null)
 		{
 			tail+="."+getTail(peh.getTail());
 		}
 		if (tail.startsWith(".")) tail=tail.substring(1);
-		ValueReference vr=peh.getDst();
-		cgm.addPathExpression(peh.getSrc(),vr,tail);
+//		ValueReference vr=peh.getDst();
+		cgm.addPathExpression(pec,tail);
 	}
-//	public void add(EClassifierConstraint ecc) 
-//	{
-//		ClassType ct=(ClassType)ecc.getType();
-//		cgm.addClassifier(ct.getClassname().getName(),ecc.getVar().getVariable().getName());
-//	}
+	public void add(EClassifierConstraint ecc) 
+	{
+		ClassType ct=(ClassType)ecc.getType();
+		cgm.addClassifier(ecc,ecc.getVar().getVariable().getName());
+	}
 	public void add(CompareConstraint cc)
 	{
-		String s=cc.getFeature().getLiteral();
-		cgm.addCompare(cc.getLeftOperand(), cc.getRightOperand(), s);
+//		String s=cc.getFeature().getLiteral();
+//		cgm.addCompare(cc.getLeftOperand(), cc.getRightOperand(), s);
+		cgm.addCompare(cc);
 	}
 	public void add(PatternCompositionConstraint pcc)
 	{
 		PatternCall pc=pcc.getCall();
 		//Pattern p=pc.getPatternRef();
 		cgm.addPatternComposition(pc,pcc.isNegative());
+	}
+	public void add(CheckConstraint cc)
+	{
+		cgm.addCheck(cc);
 	}
 	
 	private String getTail(PathExpressionTail pet)

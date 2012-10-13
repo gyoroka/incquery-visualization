@@ -3,39 +3,34 @@ package hu.bme.mit.emf.incquery.visualization.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 public class PatternElement extends MyNode {
 
-	private Pattern pattern;
 	private List<String> parameters;
 	private boolean negative;
 	
-	public PatternElement(String name) {
-		super(name);
+	
+	public PatternElement(String name,EObject o,Pattern p) {
+		super(name,o,p);
 		parameters=new ArrayList<String>();
-		negative=false;
 	}
-	public PatternElement(String name,boolean b)
+	public PatternElement(String name,EObject o,Pattern p,boolean b)
 	{
-		super(name);
+		super(name,o,p);
 		parameters=new ArrayList<String>();
 		negative=b;
-	}
-	public PatternElement(String name,Pattern p) {
-		super(name);
-		pattern=p;
-		parameters=new ArrayList<String>();
 	}
 	public List<String> getParameters()
 	{
 		return parameters;
 	}
 	
-	public Pattern getPattern()
-	{
-		return pattern;
-	}
+//	public Pattern getOrigin()
+//	{
+//		return (Pattern)getOrigin();
+//	}
 	public void setNegative(boolean b)
 	{
 		negative=b;

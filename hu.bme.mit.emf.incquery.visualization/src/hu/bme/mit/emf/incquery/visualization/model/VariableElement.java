@@ -1,17 +1,20 @@
 package hu.bme.mit.emf.incquery.visualization.model;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+
 public class VariableElement extends MyNode {
 	private boolean isParameter;
 	private boolean isTemporary;
 	private String classifierName;
-	public VariableElement(String name) {
-		super(name);
+	public VariableElement(String name,EObject o,Pattern p) {
+		super(name,o,p);
 		if (name.startsWith("_")) isTemporary=true;
 		else isTemporary=false;
 		isParameter=false;
 	}
-	public VariableElement(String name,boolean isPara) {
-		super(name);
+	public VariableElement(String name,EObject o,Pattern p,boolean isPara) {
+		super(name,o,p);
 		if (name.startsWith("_")) isTemporary=true;
 		else isTemporary=false;
 		isParameter=isPara;
