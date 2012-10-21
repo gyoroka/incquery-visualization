@@ -12,36 +12,14 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
 
 public class CallGraphModel {
 	private List<PatternElement> patterns;
-	//private List<MyNode> bodies;
 	public CallGraphModel()
 	{
 		patterns=new ArrayList<PatternElement>();
-		//bodies=new ArrayList<MyNode>();
 	}
 	
 	public void addPattern(Pattern pattern)
 	{
 		getPattern(pattern);
-//		boolean l=false;
-//		MyNode tmppattern=pattern;
-//		for (MyNode n:patterns)
-//		{
-//			if (n.getName().equals(pattern.getName())) 
-//			{
-//				l=true;
-//				tmppattern=n;
-//			}
-//		}
-//		if (!l) patterns.add(pattern);
-//		for (MyNode n:bodies)
-//		{
-//			if (n.equals(body)) 
-//			{
-//				MyConnection conn=new MyConnection(body.getName(),body,tmppattern);
-//				if (negative) conn.setNegative(true);
-//				body.getConnectedTo().add(conn);
-//			}
-//		}
 	}
 	public void addPatternCall(Pattern p,PatternCall pc,boolean b,int index)
 	{
@@ -89,8 +67,6 @@ public class CallGraphModel {
 	{
 		List<PatternElement> list=new ArrayList<PatternElement>();
 		list.addAll(patterns);
-//		list.addAll(bodies);
-		//for (PatternElement pe:list) System.out.println(pe.getName());
 		return list;
 	}
 

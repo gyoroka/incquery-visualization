@@ -9,17 +9,10 @@ import hu.bme.mit.emf.incquery.visualization.contentgraph.ContentGraphLabelProvi
 import hu.bme.mit.emf.incquery.visualization.contentgraph.ContentGraphModelContentProvider;
 import hu.bme.mit.emf.incquery.visualization.contentgraph.ContentGraphViewContentProvider;
 import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 
-import javax.swing.JButton;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.draw2d.FlowLayout;
+import org.eclipse.draw2d.SWTGraphics;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.text.TextSelection;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -27,34 +20,26 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider;
 import org.eclipse.xtext.resource.ILocationInFileProvider;
-import org.eclipse.xtext.ui.editor.XtextEditor;
-import org.eclipse.xtext.util.ITextRegion;
 import org.eclipse.zest.core.viewers.GraphViewer;
 import org.eclipse.zest.core.widgets.ZestStyles;
-import org.eclipse.zest.layouts.LayoutStyles;
-import org.eclipse.zest.layouts.algorithms.BoxLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.GridLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.zest.layouts.algorithms.SugiyamaLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 
 import com.google.inject.Inject;
@@ -64,8 +49,7 @@ public class GraphView extends ViewPart{
 	private GraphViewer callGraphViewer;
 	private GraphViewer contentGraphViewer;
 	private PatternModel patternmodel;
-//	private int callLayoutIndex=0;
-//	private int contentLayoutIndex=0;
+	
 	@Inject 
 	private IEMFTypeProvider iEMFTypeProvider;
 	@Inject
@@ -96,7 +80,6 @@ public class GraphView extends ViewPart{
 		
 		SashForm form=new SashForm(parent,SWT.BORDER);
 		callGraphViewer = new GraphViewer(form, SWT.NONE);
-		//new Label(form,SWT.SEPARATOR|SWT.VERTICAL);
 		contentGraphViewer = new GraphViewer(form, SWT.NONE);
 		callGraphViewer.setContentProvider(new CallGraphViewContentProvider());
 		callGraphViewer.setLabelProvider(new CallGraphLabelProvider());
@@ -131,13 +114,13 @@ public class GraphView extends ViewPart{
 
 			@Override
 			public void controlMoved(ControlEvent e) {
-				// TODO Auto-generated method stub
+				callGraphViewer.applyLayout();
+				contentGraphViewer.applyLayout();
 				
 			}
 
 			@Override
 			public void controlResized(ControlEvent e) {
-				// TODO Auto-generated method stub
 				callGraphViewer.applyLayout();
 				contentGraphViewer.applyLayout();
 			}
@@ -154,8 +137,9 @@ public class GraphView extends ViewPart{
 		getViewSite().getActionBars().getMenuManager().add(new Separator()); 
 		getViewSite().getActionBars().getMenuManager().add(new HorizontalSugiyamaAction());
 		getViewSite().getActionBars().getMenuManager().add(new VerticalSugiyamaAction());
-
-		
+		getViewSite().getActionBars().getMenuManager().add(new Separator()); 
+		getViewSite().getActionBars().getMenuManager().add(new GraphSaveImageAction(callGraphViewer,"Save CallGraph Image")); 
+		getViewSite().getActionBars().getMenuManager().add(new GraphSaveImageAction(contentGraphViewer,"Save ContentGraph Image"));
 	}
 
 	@Override
@@ -163,7 +147,16 @@ public class GraphView extends ViewPart{
 		callGraphViewer.getControl().setFocus();
 		contentGraphViewer.getControl().setFocus();
 	}
+	
+	public GraphViewer getCallGraphViewer()
+	{
+		return callGraphViewer;
+	}
 
+	public GraphViewer getContentGraphViewer()
+	{
+		return contentGraphViewer;
+	}
 
 
 	public class SpringAction extends Action implements IWorkbenchAction{  
@@ -172,7 +165,7 @@ public class GraphView extends ViewPart{
 			setText("Spring Layout");
 		}  
 		public void run() {  
-			contentGraphViewer.setLayoutAlgorithm(new SpringLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING));
+			contentGraphViewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
 			contentGraphViewer.applyLayout();
 		}  
 		public void dispose() {}  
@@ -229,6 +222,39 @@ public class GraphView extends ViewPart{
 		public void run() {  
 			contentGraphViewer.setLayoutAlgorithm(new SugiyamaLayoutAlgorithm2());
 			contentGraphViewer.applyLayout();
+		}  
+		public void dispose() {}  
+		} 
+	public class GraphSaveImageAction extends Action implements IWorkbenchAction{ 
+		GraphViewer g;
+		public GraphSaveImageAction(GraphViewer g0,String s){ 
+			super();
+			setText(s);
+			g=g0;
+		}  
+		public void run() {  
+			
+			Point size = new Point(g.getGraphControl().getContents().getSize().width, g.getGraphControl().getContents().getSize().height);
+			final Image image = new Image(null, size.x, size.y);
+			GC gc = new GC(image);
+			SWTGraphics swtGraphics = new SWTGraphics(gc);
+			g.getGraphControl().getContents().paint(swtGraphics);
+			gc.copyArea(image, 0, 0);
+			gc.dispose();
+			ImageLoader loader = new ImageLoader();
+		    loader.data = new ImageData[] {image.getImageData()};
+			Shell shell=new Shell(Display.getCurrent());
+			FileDialog fd=new FileDialog(shell,SWT.SAVE);
+			String[] s={"*.png"};
+			fd.setFileName("*.png");
+			fd.setFilterExtensions(s);
+			try{
+			String name=fd.open();
+			loader.save(name, SWT.IMAGE_PNG);
+			}
+			catch(Exception e)
+			{e.printStackTrace();}
+			
 		}  
 		public void dispose() {}  
 		} 

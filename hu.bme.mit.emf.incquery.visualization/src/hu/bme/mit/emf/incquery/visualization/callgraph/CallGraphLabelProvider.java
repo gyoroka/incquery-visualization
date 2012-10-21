@@ -5,15 +5,11 @@ import hu.bme.mit.emf.incquery.visualization.model.MyConnection;
 import hu.bme.mit.emf.incquery.visualization.model.MyNode;
 import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 import hu.bme.mit.emf.incquery.visualization.view.Settings;
-import hu.bme.mit.emf.incquery.visualization.view.Settings.Colors;
 
 import org.eclipse.draw2d.ConnectionRouter;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.zest.core.viewers.EntityConnectionData;
 import org.eclipse.zest.core.viewers.IConnectionStyleProvider;
 import org.eclipse.zest.core.viewers.IEntityStyleProvider;
 import org.eclipse.zest.core.widgets.ZestStyles;
@@ -38,10 +34,10 @@ IConnectionStyleProvider, IEntityStyleProvider
 			return myConnection.getLabel();
 		}
 		
-		if (element instanceof EntityConnectionData) {
-			EntityConnectionData test = (EntityConnectionData) element;
-			return "";
-		}
+//		if (element instanceof EntityConnectionData) {
+//			EntityConnectionData test = (EntityConnectionData) element;
+//			return "";
+//		}
 		
 		throw new RuntimeException("Wrong type: "
 				+ element.getClass().toString());
@@ -101,11 +97,7 @@ IConnectionStyleProvider, IEntityStyleProvider
 		// TODO Auto-generated method stub
 		if (rel instanceof AggregatedConnection) 
 		{
-//			if (((AggregatedConnection) rel).isNegative())
-//				return Settings.Colors.aggregatedNeg;
-//				else
-				return Settings.Colors.aggregated;
-			
+			return Settings.Colors.aggregated;	
 		}
 		if (rel instanceof MyConnection)
 		{
@@ -117,7 +109,6 @@ IConnectionStyleProvider, IEntityStyleProvider
 
 	@Override
 	public Color getHighlightColor(Object rel) {
-		// TODO Auto-generated method stub
 		return Settings.Colors.defaultRelHighlight;
 	}
 

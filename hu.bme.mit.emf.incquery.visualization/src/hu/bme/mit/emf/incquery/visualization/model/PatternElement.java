@@ -27,10 +27,6 @@ public class PatternElement extends MyNode {
 		return parameters;
 	}
 	
-//	public Pattern getOrigin()
-//	{
-//		return (Pattern)getOrigin();
-//	}
 	public void setNegative(boolean b)
 	{
 		negative=b;

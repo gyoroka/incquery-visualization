@@ -1,7 +1,5 @@
 package hu.bme.mit.emf.incquery.visualization.model;
 
-import java.util.ArrayList;
-
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 

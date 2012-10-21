@@ -9,7 +9,6 @@ import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 import hu.bme.mit.emf.incquery.visualization.model.VariableElement;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -83,28 +82,12 @@ public class ContentGraphModel {
 		if ((ve.getClassifierName()==null)&&(eclass!=null)) 
 		{
 			ve.setClassifierName(eclass.getName());
-		}
-		//VariableElement ve= new VariableElement(v.getName());
-		//variables.add(ve);		
+		}		
 	}
 	public void addPathExpression(PathExpressionConstraint pec,String tail) 
 	{
-		//Variable src=pec.getHead().getSrc().getVariable();
 		MyNode snode=getVariableReference(pec.getHead().getSrc());
 		MyNode dnode=getValueNode(pec.getHead().getDst());
-//		VariableElement varnode=(VariableElement)snode;
-//		if (!varnode.isParameter()) {
-//			EObject o=snode.getOrigin();
-//			if ((!(o instanceof EClassifierConstraint))&&(!(o instanceof VariableReference))) snode.setOrigin(pec.getHead().getSrc());
-//		}
-//		if (dnode instanceof VariableElement)
-//		{
-//			varnode=(VariableElement)dnode;
-//			if (!varnode.isParameter()) {
-//				EObject o=dnode.getOrigin();
-//				if ((!(o instanceof EClassifierConstraint))&&(!(o instanceof VariableReference))) dnode.setOrigin(pec.getHead().getDst());
-//			}
-//		}
 		PathConnection conn=new PathConnection(tail,snode,dnode,pec,parentPattern);
 		snode.getConnectedTo().add(conn);
 	}
@@ -117,15 +100,6 @@ public class ContentGraphModel {
 	{
 		MyNode left=getValueNode(cc.getLeftOperand());
 		MyNode right=getValueNode(cc.getRightOperand());
-//		VariableElement ve;
-//		if (left instanceof VariableElement)
-//		{
-//			ve=(VariableElement)left;
-//			if (!ve.isParameter())
-//			{
-//				EObject o=ve.getOrigin();
-//			}
-//		}
 		MyConnection conn=new MyConnection(cc.getFeature().getLiteral(),left,right,cc,parentPattern);
 		left.getConnectedTo().add(conn);
 	}
@@ -189,7 +163,6 @@ public class ContentGraphModel {
 	{
 		ICompositeNode eObjectNode = NodeModelUtils.getNode(c);
 		String s=eObjectNode.getText(); //this is the output
-		
 		CheckElement ce=new CheckElement(s,c,parentPattern);
 		Set<Variable> sv=CorePatternLanguageHelper.getReferencedPatternVariablesOfXExpression(c.getExpression());
 		for (Variable variable : sv) {
@@ -277,14 +250,6 @@ public class ContentGraphModel {
 		}
 		return null;
 	}
-//	public PatternElement findPattern(String s)
-//	{
-//		for (PatternElement item:patterns)
-//		{
-//			if ((item.getName().equals(s)) return item;
-//		}
-//		return null;
-//	}
 	//get=creates if not found
 	private MyNode getValueNode(ValueReference vr)
 	{
@@ -327,11 +292,6 @@ public class ContentGraphModel {
 	}
 	private VariableElement getVariableValue(VariableValue vv)
 	{
-//		Variable v=vv.getValue().getVariable();
-//		VariableElement node=findVariable(v);
-//		if (node!=null) return node;
-//		node = new VariableElement(v.getName(),vv.getValue(),parentPattern);
-//		variables.add(node);
 		VariableElement node=getVariableReference(vv.getValue());
 		return node;
 	}
@@ -365,16 +325,6 @@ public class ContentGraphModel {
 		node = new MyNode(Double.toString(d),dv,parentPattern);
 		doubles.add(node);
 		return node;
-	}
-//	private PatternElement getPatternValue(Pattern pv) {
-//		PatternElement node=findPatternElement(pv);
-//		if (node!=null) return node;
-//		node = new PatternElement(pv.getName());
-//		patterns.add(node);
-//		return node;
-//	}
-
-	
-	
+	}	
 
 }

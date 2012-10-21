@@ -23,9 +23,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.zest.core.widgets.ZestStyles;
 import org.eclipse.zest.layouts.LayoutAlgorithm;
+import org.eclipse.zest.layouts.algorithms.SugiyamaLayoutAlgorithm;
 import org.eclipse.zest.layouts.dataStructures.DisplayIndependentRectangle;
-import org.eclipse.zest.layouts.interfaces.ConnectionLayout;
 import org.eclipse.zest.layouts.interfaces.LayoutContext;
 import org.eclipse.zest.layouts.interfaces.NodeLayout;
 
@@ -138,7 +139,7 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 			MAX_LAYERS);
 	private final Map<NodeLayout, NodeWrapper> map = new IdentityHashMap<NodeLayout, NodeWrapper>();
 	private final int direction;
-	private final Dimension dimension;
+//	private final Dimension dimension;
 
 	private LayoutContext context;
 	private int last; // index of the last element in a layer after padding
@@ -160,7 +161,7 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 			direction = HORIZONTAL;
 		else
 			direction = VERTICAL;
-		dimension = dim;
+//		dimension = dim;
 	}
 
 	public SugiyamaLayoutAlgorithm2(int dir) {
@@ -396,17 +397,13 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 	}
 
 	private void calculatePositions() {
-		DisplayIndependentRectangle boundary = context.getBounds();
-		if (dimension != null)
-			boundary = new DisplayIndependentRectangle(0, 0,
-					dimension.preciseWidth(), dimension.preciseHeight());
-		// double dx = boundary.width / layers.size();
-		// double dy = boundary.height / (last + 1);
-		// double dx=0;
+//		DisplayIndependentRectangle boundary = context.getBounds();
+//		if (dimension != null)
+//			boundary = new DisplayIndependentRectangle(0, 0,
+//					dimension.preciseWidth(), dimension.preciseHeight());
 		double dy = 0;
 		int minindex = Integer.MAX_VALUE, maxindex = Integer.MIN_VALUE;
 		for (NodeLayout node : context.getNodes()) {
-			// dx+=node.getSize().width;
 			dy = Math.max(dy, node.getSize().height);
 			NodeWrapper nw = map.get(node);
 			if (nw.index > maxindex)
@@ -419,14 +416,10 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 		maxindex = Math.abs(maxindex);
 		int globalindex = minindex + maxindex;
 		if (globalindex < 1)
-			globalindex = 1;
-		
-		//dy *= 1.5;
-		
+			globalindex = 1;	
 
 		if (direction == HORIZONTAL)
 		{
-			//dy *= layers.size();
 			double[][] sumpoint = new double[layers.size()][globalindex + 1];
 			double[][] sumpoint2 = new double[layers.size()][globalindex + 1];
 
@@ -440,15 +433,6 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 				NodeWrapper nw = map.get(node);
 				sumpoint2[nw.layer][nw.index + minindex] = node.getSize().width * 1.5;
 			}
-//			String s = "";
-//			System.out.println("original");
-//			for (int i = 0; i < layers.size(); i++) {
-//				s = "";
-//				for (int j = 0; j < globalindex + 1; j++) {
-//					s += " " + (int) sumpoint2[i][j];
-//				}
-//				System.out.println(s);
-//			}
 			for (int n = 0; n < layers.size(); n++) {
 
 				for (int m = 1; m < globalindex + 1; m++) {
@@ -469,14 +453,6 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 					sumpoint[n][m] += sumpoint[0][pos];
 				}
 			}
-//			System.out.println("after:");
-//			for (int i = 0; i < layers.size(); i++) {
-//				s = "";
-//				for (int j = 0; j < globalindex + 1; j++) {
-//					s += " " + (int) sumpoint[i][j];
-//				}
-//				System.out.println(s);
-//			}
 			for (NodeLayout node : context.getNodes()) {
 				NodeWrapper nw = map.get(node);
 				node.setLocation(
@@ -486,7 +462,6 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 		}
 		else
 		{
-			//dy /= globalindex;
 			double[][] sumpoint = new double[globalindex + 1][layers.size()];
 			double[][] sumpoint2 = new double[globalindex + 1][layers.size()];
 
@@ -500,15 +475,7 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 				NodeWrapper nw = map.get(node);
 				sumpoint2[nw.index + minindex][nw.layer] = node.getSize().width * 2;
 			}
-//			String s = "";
-//			System.out.println("original");
-//			for (int i = 0; i < globalindex + 1; i++) {
-//				s = "";
-//				for (int j = 0; j < layers.size(); j++) {
-//					s += " " + (int) sumpoint2[i][j];
-//				}
-//				System.out.println(s);
-//			}
+
 			for (int n = 0; n < globalindex + 1; n++) {
 
 				for (int m = 1; m < layers.size(); m++) {
@@ -518,14 +485,7 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 				}
 
 			}
-//			System.out.println("after:");
-//			for (int i = 0; i < globalindex + 1; i++) {
-//				s = "";
-//				for (int j = 0; j < layers.size(); j++) {
-//					s += " " + (int) sumpoint[i][j];
-//				}
-//				System.out.println(s);
-//			}
+
 			for (NodeLayout node : context.getNodes()) {
 				NodeWrapper nw = map.get(node);
 				node.setLocation(
@@ -534,20 +494,6 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 			}
 		}
 
-		// if (direction == HORIZONTAL)
-		// for (NodeLayout node : context.getNodes()) {
-		// NodeWrapper nw = map.get(node);
-		// //node.setLocation((nw.layer+node.getSize().width/50.0) * dx,
-		// (nw.index+node.getSize().height/50.0) * dy);
-		// node.setLocation((nw.layer + 0.5d) * dx, (nw.index + 0.5d) * dy);
-		// }
-		// else
-		// for (NodeLayout node : context.getNodes()) {
-		// NodeWrapper nw = map.get(node);
-		// //node.setLocation((nw.index+node.getSize().width/50.0) * dx,
-		// (nw.layer+node.getSize().height/50.0) * dy);
-		// node.setLocation((nw.index + 0.5d) * dx, (nw.layer + 0.5d) * dy);
-		// }
 	}
 
 	private static List<NodeLayout> findRoots(List<NodeLayout> list) {

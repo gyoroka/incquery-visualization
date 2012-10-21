@@ -17,10 +17,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.RelationType;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Type;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ReferenceType;
@@ -60,8 +57,7 @@ public class ContentGraphModelContentProvider {
 		if (c instanceof EClassifierConstraint) add((EClassifierConstraint)c);
 		if (c instanceof CompareConstraint) add((CompareConstraint)c);
 		if (c instanceof PatternCompositionConstraint) add((PatternCompositionConstraint)c);
-		if (c instanceof CheckConstraint) add((CheckConstraint)c);
-		
+		if (c instanceof CheckConstraint) add((CheckConstraint)c);	
 	}
 	public void add(PathExpressionConstraint pec)
 	{
@@ -72,24 +68,20 @@ public class ContentGraphModelContentProvider {
 			tail+="."+getTail(peh.getTail());
 		}
 		if (tail.startsWith(".")) tail=tail.substring(1);
-//		ValueReference vr=peh.getDst();
 		cgm.addPathExpression(pec,tail);
 	}
 	public void add(EClassifierConstraint ecc) 
 	{
-		ClassType ct=(ClassType)ecc.getType();
+//		ClassType ct=(ClassType)ecc.getType();
 		cgm.addClassifier(ecc,ecc.getVar().getVariable().getName());
 	}
 	public void add(CompareConstraint cc)
 	{
-//		String s=cc.getFeature().getLiteral();
-//		cgm.addCompare(cc.getLeftOperand(), cc.getRightOperand(), s);
 		cgm.addCompare(cc);
 	}
 	public void add(PatternCompositionConstraint pcc)
 	{
 		PatternCall pc=pcc.getCall();
-		//Pattern p=pc.getPatternRef();
 		cgm.addPatternComposition(pc,pcc.isNegative());
 	}
 	public void add(CheckConstraint cc)

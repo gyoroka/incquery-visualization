@@ -19,7 +19,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
-import org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 import com.google.inject.Inject;
@@ -52,7 +51,6 @@ public class VisualizePatternModel extends AbstractHandler {
 	}
 
 	private void createVisualization(PatternModel model) {
-		// TODO fill body
 		
 
 		

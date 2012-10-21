@@ -4,23 +4,20 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 public class MyConnection {
-//	private String id; 
 	private EObject origin;
 	private Pattern pattern;
 	private String label; 
-	final MyNode source;
-	final MyNode destination;
+	private MyNode source;
+	private MyNode destination;
 	private boolean negative;
 	
 	public MyConnection(String label, MyNode source, MyNode destination) {
-//		this.id = id;
 		this.label = label;
 		this.source = source;
 		this.destination = destination;
 		negative=false;
 	}
 	public MyConnection(String label, MyNode source, MyNode destination,EObject o,Pattern p) {
-//		this.id = id;
 		this.label = label;
 		this.source = source;
 		this.destination = destination;
@@ -30,7 +27,6 @@ public class MyConnection {
 	}
 
 	public String getLabel() {
-		//System.out.println(label);
 		return label;
 	}
 	

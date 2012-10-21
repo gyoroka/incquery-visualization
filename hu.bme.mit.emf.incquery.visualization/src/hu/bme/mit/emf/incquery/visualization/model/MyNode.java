@@ -7,23 +7,18 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 public class MyNode {
-//	private final String id;
 	private String name;
 	private EObject origin;
 	private Pattern pattern;
 	private List<MyConnection> connections;
 
 	public MyNode(String name,EObject o,Pattern p) {
-//		this.id = id;
 		this.name = name;
 		origin=o;
 		pattern=p;
 		this.connections = new ArrayList<MyConnection>();
 	}
 
-//	public String getId() {
-//		return id;
-//	}
 	public void setName(String s) {
 		name=s;
 	}
