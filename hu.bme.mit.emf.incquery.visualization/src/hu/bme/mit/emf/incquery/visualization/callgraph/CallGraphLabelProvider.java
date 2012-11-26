@@ -8,11 +8,11 @@ import hu.bme.mit.emf.incquery.visualization.view.Settings;
 
 import org.eclipse.draw2d.ConnectionRouter;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.gef4.zest.core.viewers.IConnectionStyleProvider;
+import org.eclipse.gef4.zest.core.viewers.IEntityStyleProvider;
+import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.zest.core.viewers.IConnectionStyleProvider;
-import org.eclipse.zest.core.viewers.IEntityStyleProvider;
-import org.eclipse.zest.core.widgets.ZestStyles;
 
 public class CallGraphLabelProvider extends LabelProvider implements
 IConnectionStyleProvider, IEntityStyleProvider
@@ -29,10 +29,11 @@ IConnectionStyleProvider, IEntityStyleProvider
 			return myNode.getName();
 		}
 		// Not called with the IGraphEntityContentProvider
-		if (element instanceof MyConnection) {
-			MyConnection myConnection = (MyConnection) element;
-			return myConnection.getLabel();
-		}
+        if (element instanceof MyConnection) {
+//			MyConnection myConnection = (MyConnection) element;
+//			return myConnection.getLabel();
+            return "";
+        }
 		
 //		if (element instanceof EntityConnectionData) {
 //			EntityConnectionData test = (EntityConnectionData) element;

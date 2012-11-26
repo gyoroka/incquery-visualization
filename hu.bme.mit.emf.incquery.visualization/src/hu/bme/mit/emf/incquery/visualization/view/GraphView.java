@@ -11,6 +11,12 @@ import hu.bme.mit.emf.incquery.visualization.contentgraph.ContentGraphViewConten
 import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 
 import org.eclipse.draw2d.SWTGraphics;
+import org.eclipse.gef4.zest.core.viewers.GraphViewer;
+import org.eclipse.gef4.zest.core.widgets.ZestStyles;
+import org.eclipse.gef4.zest.layouts.algorithms.GridLayoutAlgorithm;
+import org.eclipse.gef4.zest.layouts.algorithms.RadialLayoutAlgorithm;
+import org.eclipse.gef4.zest.layouts.algorithms.SpringLayoutAlgorithm;
+import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -35,12 +41,6 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider;
 import org.eclipse.xtext.resource.ILocationInFileProvider;
-import org.eclipse.zest.core.viewers.GraphViewer;
-import org.eclipse.zest.core.widgets.ZestStyles;
-import org.eclipse.zest.layouts.algorithms.GridLayoutAlgorithm;
-import org.eclipse.zest.layouts.algorithms.RadialLayoutAlgorithm;
-import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 
 import com.google.inject.Inject;
 

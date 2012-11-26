@@ -6,9 +6,9 @@ import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef4.zest.core.viewers.IGraphEntityRelationshipContentProvider;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.zest.core.viewers.IGraphEntityRelationshipContentProvider;
 
 public class CallGraphViewContentProvider extends ArrayContentProvider implements IGraphEntityRelationshipContentProvider  {
 
@@ -30,12 +30,13 @@ public class CallGraphViewContentProvider extends ArrayContentProvider implement
 		if (source instanceof PatternElement) {
 			PatternElement node = (PatternElement) source;
 			List<MyConnection> conns=node.getConnectedTo();
-			List<MyConnection> retcon=new ArrayList<MyConnection>();
+            List<MyConnection> retcon = new ArrayList<MyConnection>();
 			for (MyConnection c:conns)
 			{
 				if (c.getDestination().equals(dest)) 
 				{
-					retcon.add(c);
+                    // retcon.add(c);
+                    return new MyConnection[] { c };
 				}
 			}
 			return retcon.toArray();

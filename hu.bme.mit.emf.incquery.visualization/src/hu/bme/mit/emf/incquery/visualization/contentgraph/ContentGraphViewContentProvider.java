@@ -6,8 +6,8 @@ import hu.bme.mit.emf.incquery.visualization.model.MyNode;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef4.zest.core.viewers.IGraphEntityRelationshipContentProvider;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.zest.core.viewers.IGraphEntityRelationshipContentProvider;
 
 public class ContentGraphViewContentProvider extends ArrayContentProvider
 		implements IGraphEntityRelationshipContentProvider {

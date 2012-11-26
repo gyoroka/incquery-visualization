@@ -20,19 +20,19 @@ import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.StackLayout;
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.gef4.zest.core.viewers.IConnectionStyleProvider;
+import org.eclipse.gef4.zest.core.viewers.IEntityStyleProvider;
+import org.eclipse.gef4.zest.core.viewers.IFigureProvider;
+import org.eclipse.gef4.zest.core.viewers.ISelfStyleProvider;
+import org.eclipse.gef4.zest.core.widgets.GraphConnection;
+import org.eclipse.gef4.zest.core.widgets.GraphNode;
+import org.eclipse.gef4.zest.core.widgets.IStyleableFigure;
+import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.zest.core.viewers.IConnectionStyleProvider;
-import org.eclipse.zest.core.viewers.IEntityStyleProvider;
-import org.eclipse.zest.core.viewers.IFigureProvider;
-import org.eclipse.zest.core.viewers.ISelfStyleProvider;
-import org.eclipse.zest.core.widgets.GraphConnection;
-import org.eclipse.zest.core.widgets.GraphNode;
-import org.eclipse.zest.core.widgets.IStyleableFigure;
-import org.eclipse.zest.core.widgets.ZestStyles;
 
 public class ContentGraphLabelProvider extends LabelProvider implements
 		IConnectionStyleProvider, IEntityStyleProvider, IFigureProvider,
