@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 
 public class PatternElement extends MyNode {
 

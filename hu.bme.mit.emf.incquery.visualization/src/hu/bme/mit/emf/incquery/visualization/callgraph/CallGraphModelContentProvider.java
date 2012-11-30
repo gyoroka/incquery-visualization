@@ -4,15 +4,15 @@ import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 
 import java.util.List;
 
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AggregatedValue;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ComputationValue;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
+import org.eclipse.incquery.patternlanguage.patternLanguage.AggregatedValue;
+import org.eclipse.incquery.patternlanguage.patternLanguage.CompareConstraint;
+import org.eclipse.incquery.patternlanguage.patternLanguage.ComputationValue;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Constraint;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCompositionConstraint;
+import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 
 public class CallGraphModelContentProvider {
 	private int bodycount;

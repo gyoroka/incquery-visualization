@@ -3,7 +3,7 @@ package hu.bme.mit.emf.incquery.visualization.model;
 import java.util.Scanner;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 
 public class CheckElement extends MyNode {
 	private String hooverText;

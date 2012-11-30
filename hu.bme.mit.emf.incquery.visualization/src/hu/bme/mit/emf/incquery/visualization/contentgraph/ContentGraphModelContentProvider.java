@@ -4,24 +4,24 @@ import hu.bme.mit.emf.incquery.visualization.model.MyNode;
 
 import java.util.List;
 
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CheckConstraint;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.EntityType;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.RelationType;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Type;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint;
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ReferenceType;
-import org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider;
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ClassType;
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EClassifierConstraint;
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
+import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
+import org.eclipse.incquery.patternlanguage.patternLanguage.CheckConstraint;
+import org.eclipse.incquery.patternlanguage.patternLanguage.CompareConstraint;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Constraint;
+import org.eclipse.incquery.patternlanguage.patternLanguage.EntityType;
+import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionConstraint;
+import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionHead;
+import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionTail;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCall;
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCompositionConstraint;
+import org.eclipse.incquery.patternlanguage.patternLanguage.RelationType;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Type;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 
 public class ContentGraphModelContentProvider {
 	private ContentGraphModel cgm;

@@ -3,6 +3,8 @@ package hu.bme.mit.emf.incquery.visualization.callgraph;
 import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.PatternRegistry;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -12,8 +14,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.xtext.resource.ILocationInFileProvider;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.util.ITextRegion;

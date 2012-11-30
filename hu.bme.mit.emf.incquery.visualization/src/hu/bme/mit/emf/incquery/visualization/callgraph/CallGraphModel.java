@@ -7,8 +7,8 @@ import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCall;
 
 public class CallGraphModel {
 	private List<PatternElement> patterns;
