@@ -5,9 +5,9 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 
 public class PathConnection extends MyConnection {
 
-	public PathConnection(String label, MyNode source, MyNode destination,EObject o,Pattern p) {
-		super(label, source, destination,o,p);
-		// TODO Auto-generated constructor stub
-	}
+    public PathConnection(String label, MyNode source, MyNode destination, EObject o, Pattern p) {
+        super(label, source, destination, o, p);
+        // TODO Auto-generated constructor stub
+    }
 
 }

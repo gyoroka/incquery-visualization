@@ -9,23 +9,23 @@ import java.util.List;
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityRelationshipContentProvider;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 
-public class ContentGraphViewContentProvider extends ArrayContentProvider
-		implements IGraphEntityRelationshipContentProvider {
+public class ContentGraphViewContentProvider extends ArrayContentProvider implements
+        IGraphEntityRelationshipContentProvider {
 
-	@Override
-	public Object[] getRelationships(Object source, Object dest) {
-		if (source instanceof MyNode) {
-			MyNode node = (MyNode) source;
-			List<MyConnection> conns = node.getConnectedTo();
-			List<MyConnection> retcon = new ArrayList<MyConnection>();
-			for (MyConnection c : conns) {
-				if (c.getDestination().equals(dest)) {
-					retcon.add(c);
-				}
-			}
-			return retcon.toArray();
-		}
-		return null;
-	}
+    @Override
+    public Object[] getRelationships(Object source, Object dest) {
+        if (source instanceof MyNode) {
+            MyNode node = (MyNode) source;
+            List<MyConnection> conns = node.getConnectedTo();
+            List<MyConnection> retcon = new ArrayList<MyConnection>();
+            for (MyConnection c : conns) {
+                if (c.getDestination().equals(dest)) {
+                    retcon.add(c);
+                }
+            }
+            return retcon.toArray();
+        }
+        return null;
+    }
 
 }

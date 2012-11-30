@@ -8,31 +8,29 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 
 public class PatternElement extends MyNode {
 
-	private List<String> parameters;
-	private boolean negative;
-	
-	
-	public PatternElement(String name,EObject o,Pattern p) {
-		super(name,o,p);
-		parameters=new ArrayList<String>();
-	}
-	public PatternElement(String name,EObject o,Pattern p,boolean b)
-	{
-		super(name,o,p);
-		parameters=new ArrayList<String>();
-		negative=b;
-	}
-	public List<String> getParameters()
-	{
-		return parameters;
-	}
-	
-	public void setNegative(boolean b)
-	{
-		negative=b;
-	}
-	public boolean isNegative()
-	{
-		return negative;
-	}
+    private List<String> parameters;
+    private boolean negative;
+
+    public PatternElement(String name, EObject o, Pattern p) {
+        super(name, o, p);
+        parameters = new ArrayList<String>();
+    }
+
+    public PatternElement(String name, EObject o, Pattern p, boolean b) {
+        super(name, o, p);
+        parameters = new ArrayList<String>();
+        negative = b;
+    }
+
+    public List<String> getParameters() {
+        return parameters;
+    }
+
+    public void setNegative(boolean b) {
+        negative = b;
+    }
+
+    public boolean isNegative() {
+        return negative;
+    }
 }

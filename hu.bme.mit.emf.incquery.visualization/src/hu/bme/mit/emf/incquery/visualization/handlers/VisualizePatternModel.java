@@ -1,6 +1,5 @@
 package hu.bme.mit.emf.incquery.visualization.handlers;
 
-
 import hu.bme.mit.emf.incquery.visualization.view.GraphView;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -25,52 +24,43 @@ import com.google.inject.Inject;
 
 public class VisualizePatternModel extends AbstractHandler {
 
-	@Inject
-	private IResourceSetProvider resourceSetProvider;
-	
-	
-	
+    @Inject
+    private IResourceSetProvider resourceSetProvider;
 
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ISelection selection = HandlerUtil.getCurrentSelection(event);
-		// Selection should contain only a single eiq file - enforced by
-		// plugin.xml conditions
-		IFile file = (IFile) ((StructuredSelection) selection)
-				.getFirstElement();
-		ResourceSet resourceSet = resourceSetProvider.get(file.getProject());
-		Resource resource = resourceSet.getResource(
-				URI.createPlatformPluginURI(file.getFullPath().toOSString(),
-						false), true);
-		EObject eObject = resource.getContents().get(0);
-		if (eObject instanceof PatternModel) {
-			PatternModel model = (PatternModel) eObject;
-			createVisualization(model);
-		}
-		return null;
-	}
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+        ISelection selection = HandlerUtil.getCurrentSelection(event);
+        // Selection should contain only a single eiq file - enforced by
+        // plugin.xml conditions
+        IFile file = (IFile) ((StructuredSelection) selection).getFirstElement();
+        ResourceSet resourceSet = resourceSetProvider.get(file.getProject());
+        Resource resource = resourceSet.getResource(
+                URI.createPlatformPluginURI(file.getFullPath().toOSString(), false), true);
+        EObject eObject = resource.getContents().get(0);
+        if (eObject instanceof PatternModel) {
+            PatternModel model = (PatternModel) eObject;
+            createVisualization(model);
+        }
+        return null;
+    }
 
-	private void createVisualization(PatternModel model) {
-		
+    private void createVisualization(PatternModel model) {
 
-		
-		String ID_VIEW="hu.bme.mit.emf.incquery.visualization.view.GraphView";
-		
-		
-		IWorkbenchPage page = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage();
-		IViewPart form = page.findView(ID_VIEW);
-		if (form == null) {
-			try {
-				form = page.showView(ID_VIEW);
-			} catch (PartInitException e) {
-				e.printStackTrace();
-			}
-		} else
-		page.bringToTop(form);
+        String ID_VIEW = "hu.bme.mit.emf.incquery.visualization.view.GraphView";
 
-		GraphView view = (GraphView) form;
-		view.setModel(model);
-		
-	}
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        IViewPart form = page.findView(ID_VIEW);
+        if (form == null) {
+            try {
+                form = page.showView(ID_VIEW);
+            } catch (PartInitException e) {
+                e.printStackTrace();
+            }
+        } else
+            page.bringToTop(form);
+
+        GraphView view = (GraphView) form;
+        view.setModel(model);
+
+    }
 }

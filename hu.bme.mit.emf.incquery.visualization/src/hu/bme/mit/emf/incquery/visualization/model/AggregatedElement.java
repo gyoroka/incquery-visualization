@@ -5,12 +5,12 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 
 public class AggregatedElement extends PatternElement {
 
-	public AggregatedElement(String name,EObject o,Pattern p) {
-		super(name,o,p);
-	}
-	public AggregatedElement(String name,EObject o,Pattern p,boolean b)
-	{
-		super(name,o,p,b);
-	}
+    public AggregatedElement(String name, EObject o, Pattern p) {
+        super(name, o, p);
+    }
+
+    public AggregatedElement(String name, EObject o, Pattern p, boolean b) {
+        super(name, o, p, b);
+    }
 
 }

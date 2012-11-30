@@ -7,43 +7,40 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 
 public class MyNode {
-	private String name;
-	private EObject origin;
-	private Pattern pattern;
-	private List<MyConnection> connections;
+    private String name;
+    private EObject origin;
+    private Pattern pattern;
+    private List<MyConnection> connections;
 
-	public MyNode(String name,EObject o,Pattern p) {
-		this.name = name;
-		origin=o;
-		pattern=p;
-		this.connections = new ArrayList<MyConnection>();
-	}
+    public MyNode(String name, EObject o, Pattern p) {
+        this.name = name;
+        origin = o;
+        pattern = p;
+        this.connections = new ArrayList<MyConnection>();
+    }
 
-	public void setName(String s) {
-		name=s;
-	}
+    public void setName(String s) {
+        name = s;
+    }
 
-	public String getName() {
-		return name;
-	}
-	
-	public void setOrigin(EObject o)
-	{
-		origin=o;
-	}
-	
-	public EObject getOrigin()
-	{
-		return origin;
-	}
-	
-	public Pattern getPattern()
-	{
-		return pattern;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public List<MyConnection> getConnectedTo() {
-		return connections;
-	}
+    public void setOrigin(EObject o) {
+        origin = o;
+    }
+
+    public EObject getOrigin() {
+        return origin;
+    }
+
+    public Pattern getPattern() {
+        return pattern;
+    }
+
+    public List<MyConnection> getConnectedTo() {
+        return connections;
+    }
 
 }

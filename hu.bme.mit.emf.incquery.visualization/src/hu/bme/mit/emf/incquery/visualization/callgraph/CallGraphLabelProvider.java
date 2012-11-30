@@ -14,121 +14,118 @@ import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Color;
 
-public class CallGraphLabelProvider extends LabelProvider implements
-IConnectionStyleProvider, IEntityStyleProvider
-{
+public class CallGraphLabelProvider extends LabelProvider implements IConnectionStyleProvider, IEntityStyleProvider {
 
-	@Override
-	public String getText(Object element) {
-		if (element instanceof PatternElement) {
-			PatternElement pe = (PatternElement) element;
-			return pe.getName();
-		}
-		if (element instanceof MyNode) {
-			MyNode myNode = (MyNode) element;
-			return myNode.getName();
-		}
-		// Not called with the IGraphEntityContentProvider
+    @Override
+    public String getText(Object element) {
+        if (element instanceof PatternElement) {
+            PatternElement pe = (PatternElement) element;
+            return pe.getName();
+        }
+        if (element instanceof MyNode) {
+            MyNode myNode = (MyNode) element;
+            return myNode.getName();
+        }
+        // Not called with the IGraphEntityContentProvider
         if (element instanceof MyConnection) {
-//			MyConnection myConnection = (MyConnection) element;
-//			return myConnection.getLabel();
+            // MyConnection myConnection = (MyConnection) element;
+            // return myConnection.getLabel();
             return "";
         }
-		
-//		if (element instanceof EntityConnectionData) {
-//			EntityConnectionData test = (EntityConnectionData) element;
-//			return "";
-//		}
-		
-		throw new RuntimeException("Wrong type: "
-				+ element.getClass().toString());
-	}
-	
-	@Override
-	public Color getNodeHighlightColor(Object entity) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public Color getBorderColor(Object entity) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+        // if (element instanceof EntityConnectionData) {
+        // EntityConnectionData test = (EntityConnectionData) element;
+        // return "";
+        // }
 
-	@Override
-	public Color getBorderHighlightColor(Object entity) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+        throw new RuntimeException("Wrong type: " + element.getClass().toString());
+    }
 
-	@Override
-	public int getBorderWidth(Object entity) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public Color getNodeHighlightColor(Object entity) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Color getBackgroundColour(Object entity) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Color getBorderColor(Object entity) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Color getForegroundColour(Object entity) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Color getBorderHighlightColor(Object entity) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public boolean fisheyeNode(Object entity) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public int getBorderWidth(Object entity) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
-	@Override
-	public int getConnectionStyle(Object rel) {
-		// TODO Auto-generated method stub
-		if (rel instanceof AggregatedConnection) return ZestStyles.CONNECTIONS_DOT;
-		return 0;
-	}
+    @Override
+    public Color getBackgroundColour(Object entity) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Color getColor(Object rel) {
-		// TODO Auto-generated method stub
-		if (rel instanceof AggregatedConnection) 
-		{
-			return Settings.Colors.aggregated;	
-		}
-		if (rel instanceof MyConnection)
-		{
-			MyConnection conn=(MyConnection)rel;
-			if (conn.isNegative()) return Settings.Colors.findNeg;
-		}
-		return Settings.Colors.defaultRel;
-	}
+    @Override
+    public Color getForegroundColour(Object entity) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Color getHighlightColor(Object rel) {
-		return Settings.Colors.defaultRelHighlight;
-	}
+    @Override
+    public boolean fisheyeNode(Object entity) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	@Override
-	public int getLineWidth(Object rel) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public int getConnectionStyle(Object rel) {
+        // TODO Auto-generated method stub
+        if (rel instanceof AggregatedConnection)
+            return ZestStyles.CONNECTIONS_DOT;
+        return 0;
+    }
 
-	@Override
-	public IFigure getTooltip(Object rel) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Color getColor(Object rel) {
+        // TODO Auto-generated method stub
+        if (rel instanceof AggregatedConnection) {
+            return Settings.Colors.aggregated;
+        }
+        if (rel instanceof MyConnection) {
+            MyConnection conn = (MyConnection) rel;
+            if (conn.isNegative())
+                return Settings.Colors.findNeg;
+        }
+        return Settings.Colors.defaultRel;
+    }
 
-	@Override
-	public ConnectionRouter getRouter(Object rel) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Color getHighlightColor(Object rel) {
+        return Settings.Colors.defaultRelHighlight;
+    }
+
+    @Override
+    public int getLineWidth(Object rel) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public IFigure getTooltip(Object rel) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ConnectionRouter getRouter(Object rel) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }
