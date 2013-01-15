@@ -38,6 +38,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
+            category="org.eclipse.incquery.tooling.ui"
             class="hu.bme.mit.emf.incquery.visualization.internal.QueryVisualisationExecutableExtensionFactory:hu.bme.mit.emf.incquery.visualization.view.GraphView"
             id="hu.bme.mit.emf.incquery.visualization.view.GraphView"
             name="IncQuery Visualization"
