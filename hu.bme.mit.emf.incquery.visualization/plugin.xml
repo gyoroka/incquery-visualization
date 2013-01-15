@@ -30,7 +30,7 @@
             commandId="hu.bme.mit.emf.incquery.visualization.pattern">
          <activeWhen>
             <reference
-                  definitionId="org.eclipse.viatra2.patternlanguage.emf.file">
+                  definitionId="org.eclipse.incquery.tooling.ui.eiq.file">
             </reference>
          </activeWhen>
       </handler>
