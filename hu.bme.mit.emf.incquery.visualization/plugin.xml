@@ -13,7 +13,7 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.viatra2.emf.incquery.tooling.gui.navigator.popup?after=additions">
+            locationURI="popup:org.eclipse.incquery.tooling.ui.navigator.popup?after=additions">
          <command
                commandId="hu.bme.mit.emf.incquery.visualization.pattern"
                style="push">
