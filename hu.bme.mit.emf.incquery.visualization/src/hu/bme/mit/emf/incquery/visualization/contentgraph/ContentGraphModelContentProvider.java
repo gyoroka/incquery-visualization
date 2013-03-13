@@ -29,17 +29,18 @@ public class ContentGraphModelContentProvider {
 	{
 		return cgm.getNodes();
 	}
-	public ContentGraphModelContentProvider(Pattern pattern, IEMFTypeProvider iEMFTypeProvider)
+	public ContentGraphModelContentProvider(Pattern pattern, IEMFTypeProvider iEMFTypeProvider,int index)
 	{
 		cgm= new ContentGraphModel(iEMFTypeProvider,pattern);
 		for (Variable p:pattern.getParameters())
 		{
 			cgm.addParameter(p);
 		}
-		for (PatternBody pb: pattern.getBodies())
-		{
-			add(pb);
-		}
+		add(pattern.getBodies().get(index));
+//		for (PatternBody pb: pattern.getBodies())
+//		{
+//			add(pb);
+//		}
 	}
 	public void add(PatternBody pb) {
 		for (Variable v:pb.getVariables())

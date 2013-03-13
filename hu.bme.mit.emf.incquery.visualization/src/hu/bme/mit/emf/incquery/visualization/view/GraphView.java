@@ -6,11 +6,13 @@ import hu.bme.mit.emf.incquery.visualization.callgraph.CallGraphModelContentProv
 import hu.bme.mit.emf.incquery.visualization.callgraph.CallGraphViewContentProvider;
 import hu.bme.mit.emf.incquery.visualization.contentgraph.ContentGraphDoubleClickListener;
 import hu.bme.mit.emf.incquery.visualization.contentgraph.ContentGraphLabelProvider;
+import hu.bme.mit.emf.incquery.visualization.contentgraph.ContentGraphLayoutAlgorithm;
 import hu.bme.mit.emf.incquery.visualization.contentgraph.ContentGraphModelContentProvider;
 import hu.bme.mit.emf.incquery.visualization.contentgraph.ContentGraphViewContentProvider;
 import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 
 import org.eclipse.draw2d.SWTGraphics;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -20,11 +22,20 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -37,7 +48,10 @@ import org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider;
 import org.eclipse.xtext.resource.ILocationInFileProvider;
 import org.eclipse.zest.core.viewers.GraphViewer;
 import org.eclipse.zest.core.widgets.ZestStyles;
+import org.eclipse.zest.layouts.LayoutAlgorithm;
+import org.eclipse.zest.layouts.algorithms.CompositeLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.GridLayoutAlgorithm;
+import org.eclipse.zest.layouts.algorithms.HorizontalShiftAlgorithm;
 import org.eclipse.zest.layouts.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
@@ -49,15 +63,31 @@ public class GraphView extends ViewPart{
 	private GraphViewer callGraphViewer;
 	private GraphViewer contentGraphViewer;
 	private PatternModel patternmodel;
+	private Combo combo;
+//	private String comboText="";
+	private PatternElement patternElement;
 	
 	@Inject 
 	private IEMFTypeProvider iEMFTypeProvider;
 	@Inject
 	private ILocationInFileProvider locationProvider;
 	
-	public void setContentModel(Pattern p)
+	public void setContentModel(Pattern p,int index)
 	{
-		ContentGraphModelContentProvider contentmodel = new ContentGraphModelContentProvider(p,iEMFTypeProvider);
+		int bodies=p.getBodies().size();
+		String items[]=new String[bodies];
+//		ArrayList<String> items=new ArrayList<String>();
+		for (int i = 0; i < bodies; i++) {
+//			items.add("Body: "+(i+1));
+			items[i]="Body: "+(i+1);
+		}
+		combo.setItems(items);
+//		if (bodies>1) {comboText=p.getName()+" contains "+bodies+" bodies."; combo.setVisible(true);}
+//		else comboText=p.getName()+" contains one body.";
+		if (bodies>1) combo.setVisible(true);
+		else combo.setVisible(false);
+//		combo.setText(comboText);
+		ContentGraphModelContentProvider contentmodel = new ContentGraphModelContentProvider(p,iEMFTypeProvider,index);
 		try {
 			contentGraphViewer.setInput(contentmodel.getNodes());
 		}
@@ -80,10 +110,54 @@ public class GraphView extends ViewPart{
 		
 		SashForm form=new SashForm(parent,SWT.BORDER);
 		callGraphViewer = new GraphViewer(form, SWT.NONE);
-		contentGraphViewer = new GraphViewer(form, SWT.NONE);
+//		SashForm form2=new SashForm(form,SWT.VERTICAL);
+//		int w0[]={2,8};
+		
+//		RowLayout rowLayout=new RowLayout(SWT.VERTICAL);
+//		form2.setLayout(rowLayout);
+//		form2.setLayoutData(new RowData());
+//		Group group=new Group(form, SWT.NONE);
+		Composite composite=new Composite(form, SWT.None);
+		GridLayout gridLayout=new GridLayout();
+		gridLayout.numColumns=1;
+		composite.setLayout(gridLayout);
+//		FormLayout formLayout=new FormLayout();
+//		contentGraphViewer = new GraphViewer(form, SWT.NONE);
+		combo=new Combo(composite, SWT.READ_ONLY);
+		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		combo.setVisible(false);
+		combo.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				int index=combo.getSelectionIndex();
+				setContentModel(patternElement.getPattern(),index);
+				combo.setText(combo.getItem(index));
+//				System.out.println(index);
+				
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+//		contentGraphViewer = new GraphViewer(composite, SWT.NONE);
+//		group.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
+		contentGraphViewer = new GraphViewer(composite, SWT.NONE);
+		contentGraphViewer.getGraphControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+//		form2.setWeights(w0);
+//		composite.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
+//		combo.pack();
 		callGraphViewer.setContentProvider(new CallGraphViewContentProvider());
 		callGraphViewer.setLabelProvider(new CallGraphLabelProvider());
-		callGraphViewer.setLayoutAlgorithm(new SugiyamaLayoutAlgorithm2(),true);
+		
+		SugiyamaLayoutAlgorithm2 sugiyamaAlgorithm = new SugiyamaLayoutAlgorithm2(0);
+		HorizontalShiftAlgorithm horizontalAlgorithm = new HorizontalShiftAlgorithm();
+		callGraphViewer.setLayoutAlgorithm(new CompositeLayoutAlgorithm(new LayoutAlgorithm[]{ sugiyamaAlgorithm,horizontalAlgorithm}),true);
+//		callGraphViewer.setLayoutAlgorithm(new TreeLayoutAlgorithm2(3,new Dimension(200,50)),true);
 		callGraphViewer.applyLayout();
 		callGraphViewer.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
 		callGraphViewer.addSelectionChangedListener( new ISelectionChangedListener(){
@@ -94,8 +168,9 @@ public class GraphView extends ViewPart{
 				Object o=selection.getFirstElement();
 				if (o instanceof PatternElement)
 				{
-					PatternElement pe=(PatternElement)o;
-					setContentModel(pe.getPattern());
+//					PatternElement pe=(PatternElement)o;
+					patternElement=(PatternElement)o;
+					setContentModel(patternElement.getPattern(),0);
 				}
 				
 			}
@@ -135,8 +210,13 @@ public class GraphView extends ViewPart{
 		getViewSite().getActionBars().getMenuManager().add(new RadialAction());
 		getViewSite().getActionBars().getMenuManager().add(new GridAction());
 		getViewSite().getActionBars().getMenuManager().add(new Separator()); 
-		getViewSite().getActionBars().getMenuManager().add(new HorizontalSugiyamaAction());
-		getViewSite().getActionBars().getMenuManager().add(new VerticalSugiyamaAction());
+		getViewSite().getActionBars().getMenuManager().add(new CustomHorizontalSugiyamaAction());
+		getViewSite().getActionBars().getMenuManager().add(new CustomVerticalSugiyamaAction());
+		getViewSite().getActionBars().getMenuManager().add(new Separator()); 
+//		getViewSite().getActionBars().getMenuManager().add(new HorizontalSugiyamaAction());
+//		getViewSite().getActionBars().getMenuManager().add(new VerticalSugiyamaAction());
+//		getViewSite().getActionBars().getMenuManager().add(new Separator()); 
+		getViewSite().getActionBars().getMenuManager().add(new CustomContentAction());
 		getViewSite().getActionBars().getMenuManager().add(new Separator()); 
 		getViewSite().getActionBars().getMenuManager().add(new GraphSaveImageAction(callGraphViewer,"Save CallGraph Image")); 
 		getViewSite().getActionBars().getMenuManager().add(new GraphSaveImageAction(contentGraphViewer,"Save ContentGraph Image"));
@@ -167,6 +247,8 @@ public class GraphView extends ViewPart{
 		public void run() {  
 			contentGraphViewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
 			contentGraphViewer.applyLayout();
+//			callGraphViewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
+//			callGraphViewer.applyLayout();
 		}  
 		public void dispose() {}  
 		}  
@@ -178,6 +260,8 @@ public class GraphView extends ViewPart{
 		public void run() {  
 			contentGraphViewer.setLayoutAlgorithm(new TreeLayoutAlgorithm());
 			contentGraphViewer.applyLayout();
+//			callGraphViewer.setLayoutAlgorithm(new TreeLayoutAlgorithm());
+//			callGraphViewer.applyLayout();
 		}  
 		public void dispose() {}  
 		} 
@@ -189,6 +273,8 @@ public class GraphView extends ViewPart{
 		public void run() {  
 			contentGraphViewer.setLayoutAlgorithm(new RadialLayoutAlgorithm());
 			contentGraphViewer.applyLayout();
+//			callGraphViewer.setLayoutAlgorithm(new RadialLayoutAlgorithm());
+//			callGraphViewer.applyLayout();
 		}  
 		public void dispose() {}  
 		} 
@@ -200,27 +286,71 @@ public class GraphView extends ViewPart{
 		public void run() {  
 			contentGraphViewer.setLayoutAlgorithm(new GridLayoutAlgorithm());
 			contentGraphViewer.applyLayout();
+//			callGraphViewer.setLayoutAlgorithm(new GridLayoutAlgorithm());
+//			callGraphViewer.applyLayout();
 		}  
 		public void dispose() {}  
 		} 
-	public class HorizontalSugiyamaAction extends Action implements IWorkbenchAction{  
-		public HorizontalSugiyamaAction(){ 
+	public class CustomHorizontalSugiyamaAction extends Action implements IWorkbenchAction{  
+		public CustomHorizontalSugiyamaAction(){ 
 			super();
 			setText("Custom Horizontal Sugiyama Layout");
 		}  
 		public void run() {  
 			contentGraphViewer.setLayoutAlgorithm(new SugiyamaLayoutAlgorithm2(1));
 			contentGraphViewer.applyLayout();
+//			callGraphViewer.setLayoutAlgorithm(new SugiyamaLayoutAlgorithm2(1));
+//			callGraphViewer.applyLayout();
+		}  
+		public void dispose() {}  
+		} 
+	public class CustomVerticalSugiyamaAction extends Action implements IWorkbenchAction{  
+		public CustomVerticalSugiyamaAction(){ 
+			super();
+			setText("Custom Vertical Sugiyama Layout");
+		}  
+		public void run() {  
+			contentGraphViewer.setLayoutAlgorithm(new SugiyamaLayoutAlgorithm2());
+			contentGraphViewer.applyLayout();
+//			callGraphViewer.setLayoutAlgorithm(new SugiyamaLayoutAlgorithm2());
+//			callGraphViewer.applyLayout();
+		}  
+		public void dispose() {}  
+		} 
+	public class HorizontalSugiyamaAction extends Action implements IWorkbenchAction{  
+		public HorizontalSugiyamaAction(){ 
+			super();
+			setText("Horizontal Sugiyama Layout");
+		}  
+		public void run() {  
+			contentGraphViewer.setLayoutAlgorithm(new SugiyamaLayoutAlgorithm2(1));
+			contentGraphViewer.applyLayout();
+//			callGraphViewer.setLayoutAlgorithm(new SugiyamaLayoutAlgorithm(2));
+//			callGraphViewer.applyLayout();
+
 		}  
 		public void dispose() {}  
 		} 
 	public class VerticalSugiyamaAction extends Action implements IWorkbenchAction{  
 		public VerticalSugiyamaAction(){ 
 			super();
-			setText("Custom Vertical Sugiyama Layout");
+			setText("Vertical Sugiyama Layout");
 		}  
 		public void run() {  
 			contentGraphViewer.setLayoutAlgorithm(new SugiyamaLayoutAlgorithm2());
+			contentGraphViewer.applyLayout();
+//			callGraphViewer.setLayoutAlgorithm(new SugiyamaLayoutAlgorithm(1));
+//			callGraphViewer.applyLayout();
+		}  
+		public void dispose() {}  
+		} 
+	public class CustomContentAction extends Action implements IWorkbenchAction{  
+		public CustomContentAction(){ 
+			super();
+			setText("Custom Content Layout");
+		}  
+		public void run() {  
+			contentGraphViewer.setLayoutAlgorithm(new ContentGraphLayoutAlgorithm());
 			contentGraphViewer.applyLayout();
 		}  
 		public void dispose() {}  

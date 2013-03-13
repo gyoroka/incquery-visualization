@@ -139,7 +139,7 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 			MAX_LAYERS);
 	private final Map<NodeLayout, NodeWrapper> map = new IdentityHashMap<NodeLayout, NodeWrapper>();
 	private final int direction;
-//	private final Dimension dimension;
+	private final Dimension dimension;
 
 	private LayoutContext context;
 	private int last; // index of the last element in a layer after padding
@@ -161,7 +161,7 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 			direction = HORIZONTAL;
 		else
 			direction = VERTICAL;
-//		dimension = dim;
+		dimension = dim;
 	}
 
 	public SugiyamaLayoutAlgorithm2(int dir) {
@@ -401,10 +401,16 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 //		if (dimension != null)
 //			boundary = new DisplayIndependentRectangle(0, 0,
 //					dimension.preciseWidth(), dimension.preciseHeight());
+		double minimumWidth=0,minimumHeight=0;
+		if (dimension !=null)
+		{
+			minimumWidth=dimension.preciseWidth();
+			minimumHeight=dimension.preciseHeight();
+		}
 		double dy = 0;
 		int minindex = Integer.MAX_VALUE, maxindex = Integer.MIN_VALUE;
 		for (NodeLayout node : context.getNodes()) {
-			dy = Math.max(dy, node.getSize().height);
+			dy = Math.max(minimumHeight, node.getSize().height);
 			NodeWrapper nw = map.get(node);
 			if (nw.index > maxindex)
 				maxindex = nw.index;
@@ -431,27 +437,39 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 			}
 			for (NodeLayout node : context.getNodes()) {
 				NodeWrapper nw = map.get(node);
-				sumpoint2[nw.layer][nw.index + minindex] = node.getSize().width * 1.5;
+//				sumpoint2[nw.layer][nw.index + minindex] = node.getSize().width * 1.5;
+				sumpoint2[nw.layer][nw.index + minindex] = Math.max(node.getSize().width * 1.5,minimumWidth);
 			}
 			for (int n = 0; n < layers.size(); n++) {
 
 				for (int m = 1; m < globalindex + 1; m++) {
 					for (int j = 1; j <= m; j++) {
+						
 						sumpoint[n][m] += sumpoint2[n][j - 1];
 					}
 				}
 
 			}
+
 			for (int n = 1; n < layers.size(); n++) {
+//				for (int m=1; m< globalindex+1;m++)
+//				{
+//					if (sumpoint[0][m]>sumpoint[n][m]) sumpoint[n][m]=sumpoint[0][m];
+//				}
 				int pos = 0;
-				while ((pos < globalindex + 1) && (sumpoint[n][pos] == 0)) {
-					pos++;
-				}
-				if (pos != 0)
-					pos--;
-				for (int m = pos; m < globalindex + 1; m++) {
-					sumpoint[n][m] += sumpoint[0][pos];
-				}
+//				do{
+					while ((pos < globalindex + 1) && (sumpoint[n][pos] == 0)) {
+						pos++;
+					}
+					if (pos != 0)
+						pos--;
+					for (int m = pos; m < globalindex + 1; m++) {
+						sumpoint[n][m] += sumpoint[0][pos];
+//						if (sumpoint[0][pos]>sumpoint[n][m]) 
+					}
+//					pos+=2;
+//				} 
+//				while(pos<globalindex + 1);
 			}
 			for (NodeLayout node : context.getNodes()) {
 				NodeWrapper nw = map.get(node);
@@ -462,34 +480,52 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 		}
 		else
 		{
-			double[][] sumpoint = new double[globalindex + 1][layers.size()];
-			double[][] sumpoint2 = new double[globalindex + 1][layers.size()];
+//			double[][] sumpoint = new double[globalindex + 1][layers.size()];
+//			double[][] sumpoint2 = new double[globalindex + 1][layers.size()];
+			double[] sumpoint = new double[layers.size()];
+			double[] sumpoint2 = new double[layers.size()];
 
-			for (int i = 0; i < layers.size(); i++) {
-				for (int j = 0; j < globalindex + 1; j++) {
-					sumpoint[j][i] = 0;
-					sumpoint2[j][i] = 0;
-				}
-			}
+//			for (int i = 0; i < layers.size(); i++) {
+//				for (int j = 0; j < globalindex + 1; j++) {
+//					sumpoint[j][i] = 0;
+//					sumpoint2[j][i] = 0;
+//				}
+//			}
+//			for (int i = 0; i < layers.size(); i++) {
+//				sumpoint[i]=0;
+//				sumpoint2[i]=0;
+//			}
 			for (NodeLayout node : context.getNodes()) {
 				NodeWrapper nw = map.get(node);
-				sumpoint2[nw.index + minindex][nw.layer] = node.getSize().width * 2;
+//				sumpoint2[nw.index + minindex][nw.layer] = Math.max(node.getSize().width * 2,minimumWidth);
+				sumpoint2[nw.layer]=Math.max(sumpoint2[nw.layer], node.getSize().width);
+			}
+			
+			for (int i = 0; i < layers.size(); i++) {
+				sumpoint2[i]=Math.max(sumpoint2[i], minimumWidth);
 			}
 
-			for (int n = 0; n < globalindex + 1; n++) {
-
-				for (int m = 1; m < layers.size(); m++) {
-					for (int j = 1; j <= m; j++) {
-						sumpoint[n][m] += sumpoint2[n][j - 1];
-					}
+//			for (int n = 0; n < globalindex + 1; n++) {
+//
+//				for (int m = 1; m < layers.size(); m++) {
+//					for (int j = 1; j <= m; j++) {
+//						sumpoint[n][m] += sumpoint2[n][j - 1];
+//					}
+//				}
+//
+//			}
+			
+			for (int m = 1; m < layers.size(); m++) {
+				for (int j = 1; j <= m; j++) {
+					sumpoint[m] += sumpoint2[j - 1];
 				}
-
 			}
 
 			for (NodeLayout node : context.getNodes()) {
 				NodeWrapper nw = map.get(node);
 				node.setLocation(
-						sumpoint[nw.index + minindex][nw.layer]
+//						sumpoint[nw.index + minindex][nw.layer]
+						sumpoint[nw.layer]
 								+ node.getSize().width / 2.0, (node.getSize().height*(2+nw.layer%2))/4.0+(nw.index+minindex) * dy*2);
 			}
 		}
