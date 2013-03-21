@@ -24,90 +24,94 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Type;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 
 public class ContentGraphModelContentProvider {
-    private ContentGraphModel cgm;
+	private ContentGraphModel cgm;
+	public List<MyNode> getNodes()
+	{
+		return cgm.getNodes();
+	}
+	public ContentGraphModelContentProvider(Pattern pattern, IEMFTypeProvider iEMFTypeProvider,int index)
+	{
+		cgm= new ContentGraphModel(iEMFTypeProvider,pattern);
+		for (Variable p:pattern.getParameters())
+		{
+			cgm.addParameter(p);
+		}
+		add(pattern.getBodies().get(index));
+//		for (PatternBody pb: pattern.getBodies())
+//		{
+//			add(pb);
+//		}
+	}
+	public void add(PatternBody pb) {
+		for (Variable v:pb.getVariables())
+		{
+			cgm.addVariable(v);
+		}
+		for (Constraint c:pb.getConstraints())
+		{
+			add(c);
+		}
+	}
+	public void add(Constraint c)
+	{
+		if (c instanceof PathExpressionConstraint) add((PathExpressionConstraint)c);
+		if (c instanceof EClassifierConstraint) add((EClassifierConstraint)c);
+		if (c instanceof CompareConstraint) add((CompareConstraint)c);
+		if (c instanceof PatternCompositionConstraint) add((PatternCompositionConstraint)c);
+		if (c instanceof CheckConstraint) add((CheckConstraint)c);	
+	}
+	public void add(PathExpressionConstraint pec)
+	{
+		PathExpressionHead peh=pec.getHead();
+		String tail="";
+		if (peh.getTail()!=null)
+		{
+			tail+="."+getTail(peh.getTail());
+		}
+		if (tail.startsWith(".")) tail=tail.substring(1);
+		cgm.addPathExpression(pec,tail);
+	}
+	public void add(EClassifierConstraint ecc) 
+	{
+//		ClassType ct=(ClassType)ecc.getType();
+		cgm.addClassifier(ecc,ecc.getVar().getVariable().getName());
+	}
+	public void add(CompareConstraint cc)
+	{
+		cgm.addCompare(cc);
+	}
+	public void add(PatternCompositionConstraint pcc)
+	{
+		PatternCall pc=pcc.getCall();
+		cgm.addPatternComposition(pc,pcc.isNegative());
+	}
+	public void add(CheckConstraint cc)
+	{
+		cgm.addCheck(cc);
+	}
+	
+	private String getTail(PathExpressionTail pet)
+	{
+		String s="";
+		Type t=pet.getType();
+		ClassType ct;
+		if (t instanceof RelationType)
+		{
+			RelationType rt=(RelationType)t;
+			ReferenceType rft=(ReferenceType)rt;
+			s=rft.getRefname().getName();
+		}
+		if (t instanceof EntityType)
+		{
+			EntityType et=(EntityType)t;
+			ct=(ClassType)et;
+			s=ct.getClassname().getName();
+		}
+		if (pet.getTail()!=null)
+		{
+			s+="."+getTail(pet.getTail());
+		}
+		return s;
+	}
 
-    public List<MyNode> getNodes() {
-        return cgm.getNodes();
-    }
-
-    public ContentGraphModelContentProvider(Pattern pattern, IEMFTypeProvider iEMFTypeProvider) {
-        cgm = new ContentGraphModel(iEMFTypeProvider, pattern);
-        for (Variable p : pattern.getParameters()) {
-            cgm.addParameter(p);
-        }
-        for (PatternBody pb : pattern.getBodies()) {
-            add(pb);
-        }
-    }
-
-    public void add(PatternBody pb) {
-        for (Variable v : pb.getVariables()) {
-            cgm.addVariable(v);
-        }
-        for (Constraint c : pb.getConstraints()) {
-            add(c);
-        }
-    }
-
-    public void add(Constraint c) {
-        if (c instanceof PathExpressionConstraint)
-            add((PathExpressionConstraint) c);
-        if (c instanceof EClassifierConstraint)
-            add((EClassifierConstraint) c);
-        if (c instanceof CompareConstraint)
-            add((CompareConstraint) c);
-        if (c instanceof PatternCompositionConstraint)
-            add((PatternCompositionConstraint) c);
-        if (c instanceof CheckConstraint)
-            add((CheckConstraint) c);
-    }
-
-    public void add(PathExpressionConstraint pec) {
-        PathExpressionHead peh = pec.getHead();
-        String tail = "";
-        if (peh.getTail() != null) {
-            tail += "." + getTail(peh.getTail());
-        }
-        if (tail.startsWith("."))
-            tail = tail.substring(1);
-        cgm.addPathExpression(pec, tail);
-    }
-
-    public void add(EClassifierConstraint ecc) {
-        // ClassType ct=(ClassType)ecc.getType();
-        cgm.addClassifier(ecc, ecc.getVar().getVariable().getName());
-    }
-
-    public void add(CompareConstraint cc) {
-        cgm.addCompare(cc);
-    }
-
-    public void add(PatternCompositionConstraint pcc) {
-        PatternCall pc = pcc.getCall();
-        cgm.addPatternComposition(pc, pcc.isNegative());
-    }
-
-    public void add(CheckConstraint cc) {
-        cgm.addCheck(cc);
-    }
-
-    private String getTail(PathExpressionTail pet) {
-        String s = "";
-        Type t = pet.getType();
-        ClassType ct;
-        if (t instanceof RelationType) {
-            RelationType rt = (RelationType) t;
-            ReferenceType rft = (ReferenceType) rt;
-            s = rft.getRefname().getName();
-        }
-        if (t instanceof EntityType) {
-            EntityType et = (EntityType) t;
-            ct = (ClassType) et;
-            s = ct.getClassname().getName();
-        }
-        if (pet.getTail() != null) {
-            s += "." + getTail(pet.getTail());
-        }
-        return s;
-    }
 }

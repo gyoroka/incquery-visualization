@@ -6,6 +6,7 @@ import hu.bme.mit.emf.incquery.visualization.callgraph.CallGraphModelContentProv
 import hu.bme.mit.emf.incquery.visualization.callgraph.CallGraphViewContentProvider;
 import hu.bme.mit.emf.incquery.visualization.contentgraph.ContentGraphDoubleClickListener;
 import hu.bme.mit.emf.incquery.visualization.contentgraph.ContentGraphLabelProvider;
+import hu.bme.mit.emf.incquery.visualization.contentgraph.ContentGraphLayoutAlgorithm;
 import hu.bme.mit.emf.incquery.visualization.contentgraph.ContentGraphModelContentProvider;
 import hu.bme.mit.emf.incquery.visualization.contentgraph.ContentGraphViewContentProvider;
 import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
@@ -29,11 +30,20 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -56,7 +66,7 @@ public class GraphView extends ViewPart {
     private ILocationInFileProvider locationProvider;
 
     public void setContentModel(Pattern p) {
-        ContentGraphModelContentProvider contentmodel = new ContentGraphModelContentProvider(p, iEMFTypeProvider);
+        ContentGraphModelContentProvider contentmodel = new ContentGraphModelContentProvider(p, iEMFTypeProvider, 0);
         try {
             contentGraphViewer.setInput(contentmodel.getNodes());
         } catch (Exception e) {
