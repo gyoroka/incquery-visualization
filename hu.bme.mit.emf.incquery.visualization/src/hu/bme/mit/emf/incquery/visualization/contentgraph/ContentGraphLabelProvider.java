@@ -28,14 +28,17 @@ import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.IStyleableFigure;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
+import org.eclipse.gef4.zest.dot.DotGraph;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
 
 public class ContentGraphLabelProvider extends LabelProvider implements IConnectionStyleProvider, IEntityStyleProvider,
-        IFigureProvider, ISelfStyleProvider {
+        IFigureProvider, ISelfStyleProvider, IFontProvider {
 
     @Override
     public String getText(Object element) {
@@ -162,7 +165,13 @@ public class ContentGraphLabelProvider extends LabelProvider implements IConnect
     @Override
     public int getConnectionStyle(Object rel) {
         if (rel instanceof PathConnection)
+        {
             return ZestStyles.CONNECTIONS_DIRECTED;
+        }
+        else
+        {
+        	
+        }
         return 0;
     }
 
@@ -292,6 +301,10 @@ public class ContentGraphLabelProvider extends LabelProvider implements IConnect
             StackLayout layout = new StackLayout();
             setLayoutManager(layout);
             l.setFont(Display.getDefault().getSystemFont());
+            
+//            l.setFont(font);
+//            setFont(font);
+            
             Dimension d = l.getPreferredSize();
             d.height *= 2;
             d.width *= 1.25;
@@ -311,5 +324,13 @@ public class ContentGraphLabelProvider extends LabelProvider implements IConnect
             setLineWidth(borderWidth);
         }
     }
+
+	@Override
+	public Font getFont(Object element) {
+		// TODO Auto-generated method stub
+		FontData[] fontData = new FontData[]{new FontData("Courier",16,SWT.BOLD)};
+        Font font = new Font(Display.getDefault().getSystemFont().getDevice(), fontData);
+		return font;
+	}
 
 }
