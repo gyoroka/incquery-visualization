@@ -1,7 +1,7 @@
 package hu.bme.mit.emf.incquery.visualization.contentgraph;
 
-import hu.bme.mit.emf.incquery.visualization.model.MyConnection;
-import hu.bme.mit.emf.incquery.visualization.model.MyNode;
+import hu.bme.mit.emf.incquery.visualization.model.CustomConnection;
+import hu.bme.mit.emf.incquery.visualization.model.CustomNode;
 import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 
 import org.eclipse.core.resources.IFile;
@@ -64,9 +64,9 @@ public class ContentGraphDoubleClickListener implements IDoubleClickListener {
                 }
             }
         }
-        if (o instanceof MyNode) {
-            EObject object = ((MyNode) o).getOrigin();
-            Pattern pattern = ((MyNode) o).getPattern();
+        if (o instanceof CustomNode) {
+            EObject object = ((CustomNode) o).getOrigin();
+            Pattern pattern = ((CustomNode) o).getPattern();
             IFile file = PatternRegistry.getInstance().getFileForPattern(pattern);
 
             for (IEditorReference ref : PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
@@ -96,9 +96,9 @@ public class ContentGraphDoubleClickListener implements IDoubleClickListener {
                 }
             }
         }
-        if (o instanceof MyConnection) {
-            EObject object = ((MyConnection) o).getOrigin();
-            Pattern pattern = ((MyConnection) o).getPattern();
+        if (o instanceof CustomConnection) {
+            EObject object = ((CustomConnection) o).getOrigin();
+            Pattern pattern = ((CustomConnection) o).getPattern();
             IFile file = PatternRegistry.getInstance().getFileForPattern(pattern);
 
             for (IEditorReference ref : PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()

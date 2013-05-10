@@ -38,7 +38,7 @@ public class CallGraphDoubleClickListener implements IDoubleClickListener {
                     .getEditorReferences()) {
                 String id = ref.getId();
                 IEditorPart editor = ref.getEditor(true);
-                if (id.equals("org.eclipse.viatra2.patternlanguage.EMFPatternLanguage")) {
+                if (id.equals("org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguage")) {
                     // The editor id always registers an Xtext editor
                     assert editor instanceof XtextEditor;
                     XtextEditor providerEditor = (XtextEditor) editor;

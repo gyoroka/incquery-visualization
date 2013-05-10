@@ -2,12 +2,12 @@ package hu.bme.mit.emf.incquery.visualization.contentgraph;
 
 import hu.bme.mit.emf.incquery.visualization.model.AggregatedElement;
 import hu.bme.mit.emf.incquery.visualization.model.CheckElement;
-import hu.bme.mit.emf.incquery.visualization.model.MyConnection;
-import hu.bme.mit.emf.incquery.visualization.model.MyNode;
+import hu.bme.mit.emf.incquery.visualization.model.CustomConnection;
+import hu.bme.mit.emf.incquery.visualization.model.CustomNode;
 import hu.bme.mit.emf.incquery.visualization.model.PathConnection;
 import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 import hu.bme.mit.emf.incquery.visualization.model.VariableElement;
-import hu.bme.mit.emf.incquery.visualization.view.Settings;
+import hu.bme.mit.emf.incquery.visualization.view.CustomColorTheme;
 
 import java.util.Scanner;
 
@@ -28,10 +28,8 @@ import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.IStyleableFigure;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
-import org.eclipse.gef4.zest.dot.DotGraph;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -40,6 +38,12 @@ import org.eclipse.swt.widgets.Display;
 public class ContentGraphLabelProvider extends LabelProvider implements IConnectionStyleProvider, IEntityStyleProvider,
         IFigureProvider, ISelfStyleProvider, IFontProvider {
 
+	CustomColorTheme ct;
+	
+	public ContentGraphLabelProvider(CustomColorTheme colorTheme) {
+		ct=colorTheme;
+	}
+	
     @Override
     public String getText(Object element) {
         if (element instanceof AggregatedElement) {
@@ -76,13 +80,13 @@ public class ContentGraphLabelProvider extends LabelProvider implements IConnect
             else
                 return s;
         }
-        if (element instanceof MyNode) {
-            MyNode myNode = (MyNode) element;
+        if (element instanceof CustomNode) {
+            CustomNode myNode = (CustomNode) element;
             return myNode.getName();
         }
         // Not called with the IGraphEntityContentProvider
-        if (element instanceof MyConnection) {
-            MyConnection myConnection = (MyConnection) element;
+        if (element instanceof CustomConnection) {
+            CustomConnection myConnection = (CustomConnection) element;
             return myConnection.getLabel();
         }
 
@@ -117,20 +121,20 @@ public class ContentGraphLabelProvider extends LabelProvider implements IConnect
     @Override
     public Color getBackgroundColour(Object entity) {
         if (entity instanceof AggregatedElement) {
-            return Settings.Colors.aggregated;
+            return ct.getColor(CustomColorTheme.AGGREGATED);
         }
         if (entity instanceof PatternElement) {
             if (((PatternElement) entity).isNegative())
-                return Settings.Colors.findNeg;
+                return ct.getColor(CustomColorTheme.FIND_NEGATIVE);
             else
-                return Settings.Colors.find;
+                return ct.getColor(CustomColorTheme.FIND);
         }
         if (entity instanceof VariableElement) {
             VariableElement ve = (VariableElement) entity;
             if (ve.isParameter())
-                return Settings.Colors.nodeBackground;
+                return ct.getColor(CustomColorTheme.VARIABLE);
             if (ve.getName().startsWith("_"))
-                return Settings.Colors.tempNodeBackground;
+                return ct.getColor(CustomColorTheme.TEMPORARY);
         }
         return null;
     }
@@ -138,20 +142,20 @@ public class ContentGraphLabelProvider extends LabelProvider implements IConnect
     @Override
     public Color getForegroundColour(Object entity) {
         if (entity instanceof AggregatedElement) {
-            return Settings.Colors.aggregatedForeground;
+            return ct.getTextColor(CustomColorTheme.AGGREGATED);
         }
         if (entity instanceof PatternElement) {
             if (((PatternElement) entity).isNegative())
-                return Settings.Colors.findNegForeground;
+                return ct.getTextColor(CustomColorTheme.FIND_NEGATIVE);
             else
-                return Settings.Colors.findForeground;
+                return ct.getTextColor(CustomColorTheme.FIND);
         }
         if (entity instanceof VariableElement) {
             VariableElement ve = (VariableElement) entity;
             if (ve.isParameter())
-                return Settings.Colors.nodeForeground;
+                return ct.getTextColor(CustomColorTheme.VARIABLE);;
             if (ve.getName().startsWith("_"))
-                return Settings.Colors.tempNodeForeground;
+                return ct.getTextColor(CustomColorTheme.TEMPORARY);;
         }
         return null;
     }
@@ -177,17 +181,17 @@ public class ContentGraphLabelProvider extends LabelProvider implements IConnect
 
     @Override
     public Color getColor(Object rel) {
-        if (rel instanceof MyConnection) {
-            MyConnection conn = (MyConnection) rel;
+        if (rel instanceof CustomConnection) {
+            CustomConnection conn = (CustomConnection) rel;
             if (conn.isNegative())
-                return Settings.Colors.findNeg;
+                return ct.getColor(CustomColorTheme.RELATION_NEGATIVE);
         }
-        return Settings.Colors.defaultRel;
+        return ct.getColor(CustomColorTheme.RELATION_DEFAULT);
     }
 
     @Override
     public Color getHighlightColor(Object rel) {
-        return Settings.Colors.defaultRelHighlight;
+        return ct.getTextColor(CustomColorTheme.RELATION_DEFAULT);
         // return null;
     }
 
@@ -207,7 +211,6 @@ public class ContentGraphLabelProvider extends LabelProvider implements IConnect
             FontData[] fontData = Display.getDefault().getSystemFont().getFontData();
             Font font = new Font(Display.getDefault().getSystemFont().getDevice(), fontData);
             l.setFont(font);
-
             Dimension d = l.getPreferredSize();
             figure.setSize(d);
             figure.add(l);
@@ -226,7 +229,7 @@ public class ContentGraphLabelProvider extends LabelProvider implements IConnect
     public IFigure getFigure(Object element) {
         if (element instanceof AggregatedElement) {
             AggregatedElement ae = (AggregatedElement) element;
-            MyNodeFigure f = new MyNodeFigure(getText(ae));
+            EllipseFigure f = new EllipseFigure(getText(ae));
             return f;
         }
         if (element instanceof PatternElement)
@@ -240,15 +243,16 @@ public class ContentGraphLabelProvider extends LabelProvider implements IConnect
                 s += v.getName();
             if (v.getClassifierName() != null)
                 s += " : " + v.getClassifierName();
-            MyNodeFigure f = new MyNodeFigure(s);
+            EllipseFigure f = new EllipseFigure(s);
+//            MyNodeFigure f = new MyNodeFigure(s);
             if (v.isParameter()) {
-                f.setBackgroundColor(Settings.Colors.paramNodeBackground);
-                f.setForegroundColor(Settings.Colors.paramNodeForeground);
+                f.setBackgroundColor(ct.getColor(CustomColorTheme.PARAMETER));
+                f.setForegroundColor(ct.getTextColor(CustomColorTheme.PARAMETER));
                 return f;
             }
             if (v.isTemporary()) {
-                f.setBackgroundColor(Settings.Colors.tempNodeBackground);
-                f.setForegroundColor(Settings.Colors.tempNodeForeground);
+                f.setBackgroundColor(ct.getColor(CustomColorTheme.TEMPORARY));
+                f.setForegroundColor(ct.getTextColor(CustomColorTheme.TEMPORARY));
                 return f;
             }
             return f;
@@ -261,11 +265,11 @@ public class ContentGraphLabelProvider extends LabelProvider implements IConnect
         IFigure nodeFigure;
         Connection connectionFigure = connection.getConnectionFigure();
         nodeFigure = connection.getSource().getFigure();
-        if (nodeFigure instanceof MyNodeFigure) {
+        if (nodeFigure instanceof Ellipse) {
             connectionFigure.setSourceAnchor(new EllipseAnchor(nodeFigure));
         }
         nodeFigure = connection.getDestination().getFigure();
-        if (nodeFigure instanceof MyNodeFigure) {
+        if (nodeFigure instanceof Ellipse) {
             connectionFigure.setTargetAnchor(new EllipseAnchor(nodeFigure));
         }
 
@@ -293,9 +297,9 @@ public class ContentGraphLabelProvider extends LabelProvider implements IConnect
         }
     }
 
-    class MyNodeFigure extends Ellipse implements IStyleableFigure {
+    class EllipseFigure extends Ellipse implements IStyleableFigure {
         // private Color borderColor;
-        public MyNodeFigure(String s) {
+        public EllipseFigure(String s) {
             super();
             Label l = new Label(s);
             StackLayout layout = new StackLayout();
@@ -307,11 +311,11 @@ public class ContentGraphLabelProvider extends LabelProvider implements IConnect
             
             Dimension d = l.getPreferredSize();
             d.height *= 2;
-            d.width *= 1.25;
+            d.width *= 1.4;
             setSize(d);
             add(l);
-            setForegroundColor(Settings.Colors.nodeForeground);
-            setBackgroundColor(Settings.Colors.nodeBackground);
+            setForegroundColor(ct.getTextColor(CustomColorTheme.VARIABLE));
+            setBackgroundColor(ct.getColor(CustomColorTheme.VARIABLE));
         }
 
         @Override
@@ -324,13 +328,43 @@ public class ContentGraphLabelProvider extends LabelProvider implements IConnect
             setLineWidth(borderWidth);
         }
     }
+    
+//    class PolygonFigure extends Polygon implements IStyleableFigure {
+//        // private Color borderColor;
+//        public PolygonFigure(String s) {
+//            super();
+//            Label l = new Label(s);
+//            for (int i = 0; i < 5; i++)
+//                addPoint(new Point((int) (100 + 50 * Math.cos(i * 2 * Math.PI / 5)),
+//                    (int) (100 + 50 * Math.sin(i * 2 * Math.PI / 5))));
+//            StackLayout layout = new StackLayout();
+//            setLayoutManager(layout);
+//            l.setFont(Display.getDefault().getSystemFont());
+//            Dimension d = l.getPreferredSize();
+//            d.height *= 2;
+//            d.width *= 2;
+//            setSize(d);
+//            add(l);
+//            
+//            setForegroundColor(Settings.Colors.nodeForeground);
+//            setBackgroundColor(Settings.Colors.nodeBackground);
+//        }
+//        @Override
+//        public void setBorderColor(Color borderColor) {
+//        }
+//        @Override
+//        public void setBorderWidth(int borderWidth) {
+//            setLineWidth(borderWidth);
+//        }
+//    }
 
 	@Override
 	public Font getFont(Object element) {
 		// TODO Auto-generated method stub
-		FontData[] fontData = new FontData[]{new FontData("Courier",16,SWT.BOLD)};
-        Font font = new Font(Display.getDefault().getSystemFont().getDevice(), fontData);
-		return font;
+//		FontData[] fontData = new FontData[]{new FontData("Courier",16,SWT.ITALIC)};
+//        Font font = new Font(Display.getDefault().getSystemFont().getDevice(), fontData);
+//		return font;
+		return Display.getDefault().getSystemFont();
 	}
 
 }

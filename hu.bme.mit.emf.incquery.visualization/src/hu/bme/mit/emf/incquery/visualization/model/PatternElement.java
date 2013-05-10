@@ -6,7 +6,7 @@ import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 
-public class PatternElement extends MyNode {
+public class PatternElement extends CustomNode {
 
     private List<String> parameters;
     private boolean negative;

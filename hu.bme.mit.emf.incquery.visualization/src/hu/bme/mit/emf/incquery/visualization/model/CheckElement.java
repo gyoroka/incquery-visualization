@@ -5,7 +5,7 @@ import java.util.Scanner;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 
-public class CheckElement extends MyNode {
+public class CheckElement extends CustomNode {
     private String hooverText;
 
     public CheckElement(String name, EObject o, Pattern p) {

@@ -1,7 +1,7 @@
 package hu.bme.mit.emf.incquery.visualization.contentgraph;
 
-import hu.bme.mit.emf.incquery.visualization.model.MyConnection;
-import hu.bme.mit.emf.incquery.visualization.model.MyNode;
+import hu.bme.mit.emf.incquery.visualization.model.CustomConnection;
+import hu.bme.mit.emf.incquery.visualization.model.CustomNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +14,11 @@ public class ContentGraphViewContentProvider extends ArrayContentProvider implem
 
     @Override
     public Object[] getRelationships(Object source, Object dest) {
-        if (source instanceof MyNode) {
-            MyNode node = (MyNode) source;
-            List<MyConnection> conns = node.getConnectedTo();
-            List<MyConnection> retcon = new ArrayList<MyConnection>();
-            for (MyConnection c : conns) {
+        if (source instanceof CustomNode) {
+            CustomNode node = (CustomNode) source;
+            List<CustomConnection> conns = node.getConnectedTo();
+            List<CustomConnection> retcon = new ArrayList<CustomConnection>();
+            for (CustomConnection c : conns) {
                 if (c.getDestination().equals(dest)) {
                     retcon.add(c);
                 }

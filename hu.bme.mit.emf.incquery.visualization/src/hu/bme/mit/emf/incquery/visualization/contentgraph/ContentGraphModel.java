@@ -2,8 +2,8 @@ package hu.bme.mit.emf.incquery.visualization.contentgraph;
 
 import hu.bme.mit.emf.incquery.visualization.model.AggregatedElement;
 import hu.bme.mit.emf.incquery.visualization.model.CheckElement;
-import hu.bme.mit.emf.incquery.visualization.model.MyConnection;
-import hu.bme.mit.emf.incquery.visualization.model.MyNode;
+import hu.bme.mit.emf.incquery.visualization.model.CustomConnection;
+import hu.bme.mit.emf.incquery.visualization.model.CustomNode;
 import hu.bme.mit.emf.incquery.visualization.model.PathConnection;
 import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 import hu.bme.mit.emf.incquery.visualization.model.VariableElement;
@@ -42,11 +42,11 @@ public class ContentGraphModel {
     private List<PatternElement> patterns;
     private List<AggregatedElement> aggregateds;
     private List<CheckElement> checks;
-    private List<MyNode> ints, strings, bools, doubles;
+    private List<CustomNode> ints, strings, bools, doubles;
     private IEMFTypeProvider iEMFTypeProvider;
 
-    public List<MyNode> getNodes() {
-        List<MyNode> tmp = new ArrayList<MyNode>();
+    public List<CustomNode> getNodes() {
+        List<CustomNode> tmp = new ArrayList<CustomNode>();
         tmp.addAll(variables);
         tmp.addAll(ints);
         tmp.addAll(strings);
@@ -60,10 +60,10 @@ public class ContentGraphModel {
 
     public ContentGraphModel(IEMFTypeProvider iEMFTypeProvider0, Pattern p) {
         variables = new ArrayList<VariableElement>();
-        ints = new ArrayList<MyNode>();
-        strings = new ArrayList<MyNode>();
-        bools = new ArrayList<MyNode>();
-        doubles = new ArrayList<MyNode>();
+        ints = new ArrayList<CustomNode>();
+        strings = new ArrayList<CustomNode>();
+        bools = new ArrayList<CustomNode>();
+        doubles = new ArrayList<CustomNode>();
         patterns = new ArrayList<PatternElement>();
         aggregateds = new ArrayList<AggregatedElement>();
         checks = new ArrayList<CheckElement>();
@@ -88,8 +88,8 @@ public class ContentGraphModel {
     }
 
     public void addPathExpression(PathExpressionConstraint pec, String tail) {
-        MyNode snode = getVariableReference(pec.getHead().getSrc());
-        MyNode dnode = getValueNode(pec.getHead().getDst());
+        CustomNode snode = getVariableReference(pec.getHead().getSrc());
+        CustomNode dnode = getValueNode(pec.getHead().getDst());
         PathConnection conn = new PathConnection(tail, snode, dnode, pec, parentPattern);
         snode.getConnectedTo().add(conn);
     }
@@ -101,9 +101,9 @@ public class ContentGraphModel {
     }
 
     public void addCompare(CompareConstraint cc) {
-        MyNode left = getValueNode(cc.getLeftOperand());
-        MyNode right = getValueNode(cc.getRightOperand());
-        MyConnection conn = new MyConnection(cc.getFeature().getLiteral(), left, right, cc, parentPattern);
+        CustomNode left = getValueNode(cc.getLeftOperand());
+        CustomNode right = getValueNode(cc.getRightOperand());
+        CustomConnection conn = new CustomConnection(cc.getFeature().getLiteral(), left, right, cc, parentPattern);
         left.getConnectedTo().add(conn);
     }
 
@@ -120,7 +120,7 @@ public class ContentGraphModel {
         AggregatedElement ae = addAggregatedValue(p);
         for (int index = 0; index < srcParams.size(); index++) {
             ValueReference vr = srcParams.get(index);
-            MyNode src = getValueNode(vr);
+            CustomNode src = getValueNode(vr);
             String varName = dstParams.get(index).getName();
             boolean l = false;
             for (String parString : ae.getParameters()) {
@@ -129,7 +129,7 @@ public class ContentGraphModel {
             }
             if (!l)
                 ae.getParameters().add(varName);
-            MyConnection conn = new MyConnection(varName, src, ae, pc, parentPattern);
+            CustomConnection conn = new CustomConnection(varName, src, ae, pc, parentPattern);
             src.getConnectedTo().add(conn);
         }
         return ae;
@@ -148,7 +148,7 @@ public class ContentGraphModel {
         PatternElement pe = addPatternValue(p, negative);
         for (int index = 0; index < srcParams.size(); index++) {
             ValueReference vr = srcParams.get(index);
-            MyNode src = getValueNode(vr);
+            CustomNode src = getValueNode(vr);
             String varName = dstParams.get(index).getName();
             boolean l = false;
             for (String parString : pe.getParameters()) {
@@ -157,7 +157,7 @@ public class ContentGraphModel {
             }
             if (!l)
                 pe.getParameters().add(varName);
-            MyConnection conn = new MyConnection(varName, src, pe, pc, parentPattern);
+            CustomConnection conn = new CustomConnection(varName, src, pe, pc, parentPattern);
             src.getConnectedTo().add(conn);
 
         }
@@ -171,10 +171,40 @@ public class ContentGraphModel {
         Set<Variable> sv = CorePatternLanguageHelper.getReferencedPatternVariablesOfXExpression(c.getExpression());
         for (Variable variable : sv) {
             VariableElement ve = getVariable(variable);
-            MyConnection conn = new MyConnection("", ce, ve, c, parentPattern);
+            CustomConnection conn = new CustomConnection("", ce, ve, c, parentPattern);
             ce.getConnectedTo().add(conn);
         }
         checks.add(ce);
+    }
+    
+    
+    public Object findElementByName(String name)
+    {
+    	for (VariableElement element : variables) {
+			if (element.getName().equals(name)) return element;
+		}
+    	for (CustomNode element : ints) {
+			if (element.getName().equals(name)) return element;
+		}
+    	for (CustomNode element : strings) {
+			if (element.getName().equals(name)) return element;
+		}
+    	for (CustomNode element : bools) {
+			if (element.getName().equals(name)) return element;
+		}
+    	for (CustomNode element : doubles) {
+			if (element.getName().equals(name)) return element;
+		}
+    	for (PatternElement element : patterns) {
+			if (element.getName().equals(name)) return element;
+		}
+    	for (AggregatedElement element : aggregateds) {
+			if (element.getName().equals(name)) return element;
+		}
+    	for (CheckElement element : checks) {
+			if (element.getName().equals(name)) return element;
+		}
+    	return null;
     }
 
     private PatternElement addPatternValue(Pattern p, boolean negative) {
@@ -197,47 +227,47 @@ public class ContentGraphModel {
         return null;
     }
 
-    public MyNode findInt(int i) {
+    public CustomNode findInt(int i) {
         String s = Integer.toString(i);
         return findInt(s);
     }
 
-    public MyNode findInt(String s) {
-        for (MyNode item : ints) {
+    public CustomNode findInt(String s) {
+        for (CustomNode item : ints) {
             if (item.getName().equals(s))
                 return item;
         }
         return null;
     }
 
-    public MyNode findString(String s) {
-        for (MyNode item : strings) {
+    public CustomNode findString(String s) {
+        for (CustomNode item : strings) {
             if (item.getName().equals(s))
                 return item;
         }
         return null;
     }
 
-    public MyNode findBool(boolean l) {
+    public CustomNode findBool(boolean l) {
         String s = Boolean.toString(l);
         return findBool(s);
     }
 
-    public MyNode findBool(String s) {
-        for (MyNode item : bools) {
+    public CustomNode findBool(String s) {
+        for (CustomNode item : bools) {
             if (item.getName().equals(s))
                 return item;
         }
         return null;
     }
 
-    public MyNode findDouble(double d) {
+    public CustomNode findDouble(double d) {
         String s = Double.toString(d);
         return findDouble(s);
     }
 
-    public MyNode findDouble(String s) {
-        for (MyNode item : doubles) {
+    public CustomNode findDouble(String s) {
+        for (CustomNode item : doubles) {
             if (item.getName().equals(s))
                 return item;
         }
@@ -254,8 +284,8 @@ public class ContentGraphModel {
     }
 
     // get=creates if not found
-    private MyNode getValueNode(ValueReference vr) {
-        MyNode node = null;
+    private CustomNode getValueNode(ValueReference vr) {
+        CustomNode node = null;
         LiteralValueReference lvr = null;
         if (vr instanceof VariableValue)
             node = getVariableValue((VariableValue) vr);
@@ -304,41 +334,41 @@ public class ContentGraphModel {
         return node;
     }
 
-    private MyNode getIntValue(IntValue iv) {
+    private CustomNode getIntValue(IntValue iv) {
         int i = iv.getValue();
-        MyNode node = findInt(i);
+        CustomNode node = findInt(i);
         if (node != null)
             return node;
-        node = new MyNode(Integer.toString(i), iv, parentPattern);
+        node = new CustomNode(Integer.toString(i), iv, parentPattern);
         ints.add(node);
         return node;
     }
 
-    private MyNode getStringValue(StringValue s) {
-        MyNode node = findString(s.getValue());
+    private CustomNode getStringValue(StringValue s) {
+        CustomNode node = findString(s.getValue());
         if (node != null)
             return node;
-        node = new MyNode(s.getValue(), s, parentPattern);
+        node = new CustomNode(s.getValue(), s, parentPattern);
         strings.add(node);
         return node;
     }
 
-    private MyNode getBoolValue(BoolValue bv) {
+    private CustomNode getBoolValue(BoolValue bv) {
         boolean b = bv.isValue();
-        MyNode node = findBool(b);
+        CustomNode node = findBool(b);
         if (node != null)
             return node;
-        node = new MyNode(Boolean.toString(b), bv, parentPattern);
+        node = new CustomNode(Boolean.toString(b), bv, parentPattern);
         bools.add(node);
         return node;
     }
 
-    private MyNode getDoubleValue(DoubleValue dv) {
+    private CustomNode getDoubleValue(DoubleValue dv) {
         double d = dv.getValue();
-        MyNode node = findDouble(d);
+        CustomNode node = findDouble(d);
         if (node != null)
             return node;
-        node = new MyNode(Double.toString(d), dv, parentPattern);
+        node = new CustomNode(Double.toString(d), dv, parentPattern);
         doubles.add(node);
         return node;
     }

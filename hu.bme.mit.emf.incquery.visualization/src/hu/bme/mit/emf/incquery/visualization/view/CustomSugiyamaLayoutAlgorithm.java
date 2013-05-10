@@ -13,6 +13,7 @@ package hu.bme.mit.emf.incquery.visualization.view;
  *          associated to bugzilla entry #384730  
  *******************************************************************************/
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,9 +24,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.SugiyamaLayoutAlgorithm;
+import org.eclipse.gef4.zest.layouts.interfaces.ConnectionLayout;
 import org.eclipse.gef4.zest.layouts.interfaces.LayoutContext;
 import org.eclipse.gef4.zest.layouts.interfaces.NodeLayout;
 
@@ -45,7 +48,7 @@ import org.eclipse.gef4.zest.layouts.interfaces.NodeLayout;
  * @version 1.2
  * @author Rene Kuhlemann
  */
-public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
+public class CustomSugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 
     // Tree direction constants
     public final static int HORIZONTAL = 1;
@@ -154,7 +157,7 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 	 *            - desired size of the layout area. Uses
 	 *            {@link LayoutContext#getBounds()} if not set
 	 */
-	public SugiyamaLayoutAlgorithm2(int dir, Dimension dim) {
+	public CustomSugiyamaLayoutAlgorithm(int dir, Dimension dim) {
 		if (dir == HORIZONTAL)
 			direction = HORIZONTAL;
 		else
@@ -162,11 +165,11 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 		dimension = dim;
 	}
 
-    public SugiyamaLayoutAlgorithm2(int dir) {
+    public CustomSugiyamaLayoutAlgorithm(int dir) {
         this(dir, null);
     }
 
-    public SugiyamaLayoutAlgorithm2() {
+    public CustomSugiyamaLayoutAlgorithm() {
         this(VERTICAL, null);
     }
 
@@ -207,7 +210,7 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
         List<NodeLayout> predecessors = findRoots(nodes);
         nodes.removeAll(predecessors); // nodes now contains only nodes that are
                                        // no roots
-        addLayer(predecessors);
+        if (predecessors.size()>0) addLayer(predecessors);
         int myMaxLayers = nodes.size();
         for (int level = 1; nodes.isEmpty() == false; level++) {
             // if (level > MAX_LAYERS)
@@ -215,12 +218,47 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
                 throw new RuntimeException("Graphical tree exceeds maximum depth of " + myMaxLayers// MAX_LAYERS
                         + "! (Graph not directed? Cycles?)");
             List<NodeLayout> layer = new ArrayList<NodeLayout>();
+//            List<NodeLayout> pre=null;
+//            List<NodeLayout> post=null;
+            
+            int x=0;
             for (NodeLayout item : nodes) {
+//            	List<NodeLayout> unidirectional=new ArrayList<NodeLayout>();
+//            	pre=Arrays.asList(item.getPredecessingNodes());
+//            	post=Arrays.asList(item.getSuccessingNodes());
+//            	for (NodeLayout p : pre) {
+//					if (!post.contains(p)) unidirectional.add(p);
+//				}
+//            	if (predecessors.contains(unidirectional))
+//                    {layer.add(item);x++;}
                 if (predecessors.containsAll(Arrays.asList(item.getPredecessingNodes())))
                     layer.add(item);
             }
-            if (layer.size() == 0)
-                layer.add(nodes.get(0));
+            
+            for (NodeLayout item : layer) {
+                if (predecessors.containsAll(Arrays.asList(item.getPredecessingNodes())))
+                    x++;
+            }
+//            if (x==0) {
+//            for (NodeLayout item : nodes) {
+//                if (predecessors.contains(Arrays.asList(item.getPredecessingNodes())))
+//                    {layer.add(item);x++;}
+//            }
+//            }
+            if (x == 0)
+            {
+            	int max=0,tmp;
+            	for (NodeLayout node : nodes) {
+					tmp=node.getIncomingConnections().length+node.getOutgoingConnections().length;
+					if (tmp>max) max=tmp;
+				}
+            	for (NodeLayout node : nodes) {
+					tmp=node.getIncomingConnections().length+node.getOutgoingConnections().length;
+					if (tmp==max) layer.add(node);
+				}
+            	
+                //layer.add(nodes.get(0));
+            }
             nodes.removeAll(layer);
             predecessors.addAll(layer);
             addLayer(layer);
@@ -390,7 +428,7 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 //		if (dimension != null)
 //			boundary = new DisplayIndependentRectangle(0, 0,
 //					dimension.preciseWidth(), dimension.preciseHeight());
-		double minimumWidth=0,minimumHeight=0;
+		double minimumWidth=20,minimumHeight=5;
 		if (dimension !=null)
 		{
 			minimumWidth=dimension.preciseWidth();
@@ -399,7 +437,7 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 		double dy = 0;
 		int minindex = Integer.MAX_VALUE, maxindex = Integer.MIN_VALUE;
 		for (NodeLayout node : context.getNodes()) {
-			dy = Math.max(minimumHeight, node.getSize().height);
+			dy = minimumHeight + node.getSize().height;
 			NodeWrapper nw = map.get(node);
 			if (nw.index > maxindex)
 				maxindex = nw.index;
@@ -425,23 +463,28 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 				}
 			}
 			for (NodeLayout node : context.getNodes()) {
+//				System.out.println(node.toString());
+//				for (ConnectionLayout cl : node.getOutgoingConnections()) {
+//					if (cl instanceof ConnectionLayout)
+//					{
+//						GraphConnection conn=(GraphConnection)cl;
+//						System.out.println(conn.getText());
+//					}
+//					
+//				} 
+				
 				NodeWrapper nw = map.get(node);
 //				sumpoint2[nw.layer][nw.index + minindex] = node.getSize().width * 1.5;
-				sumpoint2[nw.layer][nw.index + minindex] = Math.max(node.getSize().width * 1.5,minimumWidth);
+				sumpoint2[nw.layer][nw.index + minindex] = node.getSize().width * 1.5+minimumWidth;
 			}
 			for (int n = 0; n < layers.size(); n++) {
-
-
 				for (int m = 1; m < globalindex + 1; m++) {
 					for (int j = 1; j <= m; j++) {
 						
 						sumpoint[n][m] += sumpoint2[n][j - 1];
 					}
 				}
-
-
 			}
-
 			for (int n = 1; n < layers.size(); n++) {
 //				for (int m=1; m< globalindex+1;m++)
 //				{
@@ -455,7 +498,9 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 					if (pos != 0)
 						pos--;
 					for (int m = pos; m < globalindex + 1; m++) {
-						sumpoint[n][m] += sumpoint[0][pos];
+						double cm=0; int mi=0;
+						for (int ii=0;ii<layers.size();ii++) if (sumpoint[ii][pos]>cm) {mi=ii;cm=sumpoint[ii][pos];}
+						sumpoint[n][m] += sumpoint[mi][pos];
 //						if (sumpoint[0][pos]>sumpoint[n][m]) 
 					}
 //					pos+=2;
@@ -494,7 +539,7 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 			}
 			
 			for (int i = 0; i < layers.size(); i++) {
-				sumpoint2[i]=Math.max(sumpoint2[i], minimumWidth);
+				sumpoint2[i]=sumpoint2[i] + minimumWidth;
 			}
 
 
@@ -529,11 +574,61 @@ public class SugiyamaLayoutAlgorithm2 implements LayoutAlgorithm {
 
     private static List<NodeLayout> findRoots(List<NodeLayout> list) {
         List<NodeLayout> roots = new ArrayList<NodeLayout>();
+        ArrayList<NodeLayout> positives = new ArrayList<NodeLayout>();
+        ArrayList<NodeLayout> candidates = new ArrayList<NodeLayout>();
         for (NodeLayout iter : list) { // no predecessors means: this is a root,
                                        // add it to list
             if (iter.getPredecessingNodes().length == 0)
-                roots.add(iter);
+                positives.add(iter);
+            //
+            else
+            {
+            	int vicaversa=0;
+            	NodeLayout[] pre=iter.getPredecessingNodes();
+            	NodeLayout[] post=iter.getSuccessingNodes();
+            	int i=0;
+            	boolean l;
+            	while (i<pre.length)
+            	{
+            		l=false;
+            		int j = 0; 
+            		while ((!l)&&(j < post.length)) {
+						if (pre[i].equals(post[j])) l=true;
+						j++;
+					}
+            		if (l) vicaversa++;
+					i++;
+				}
+            	if (vicaversa==pre.length) candidates.add(iter);
+            }
         }
+        
+        if (positives.size()>0)
+        {
+        	roots.addAll(positives);
+        	for (NodeLayout c : candidates) {
+				if (positives.contains(c))
+				{
+					roots.add(c);
+				}
+			}
+        }
+        else
+        {
+        	boolean found=false,l;
+        	int i=0;
+        	while (!found&&i<candidates.size())
+        	{
+        		l=true;
+        		for (NodeLayout post : candidates.get(i).getSuccessingNodes()) {
+					if (positives.contains(post)) l=false;
+				}
+        		if (!l) {found=true;roots.add(candidates.get(i));}
+        		i++;
+        	}
+        	if (!found&&!candidates.isEmpty()) roots.add(candidates.get(0));
+        }
+        
         return (roots);
     }
 

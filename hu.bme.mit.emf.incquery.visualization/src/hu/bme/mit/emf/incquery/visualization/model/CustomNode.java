@@ -6,17 +6,17 @@ import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 
-public class MyNode {
+public class CustomNode {
     private String name;
     private EObject origin;
     private Pattern pattern;
-    private List<MyConnection> connections;
+    private List<CustomConnection> connections;
 
-    public MyNode(String name, EObject o, Pattern p) {
+    public CustomNode(String name, EObject o, Pattern p) {
         this.name = name;
         origin = o;
         pattern = p;
-        this.connections = new ArrayList<MyConnection>();
+        this.connections = new ArrayList<CustomConnection>();
     }
 
     public void setName(String s) {
@@ -39,7 +39,7 @@ public class MyNode {
         return pattern;
     }
 
-    public List<MyConnection> getConnectedTo() {
+    public List<CustomConnection> getConnectedTo() {
         return connections;
     }
 

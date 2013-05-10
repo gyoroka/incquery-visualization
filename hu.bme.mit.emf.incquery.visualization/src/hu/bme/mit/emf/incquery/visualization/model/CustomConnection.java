@@ -3,22 +3,22 @@ package hu.bme.mit.emf.incquery.visualization.model;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 
-public class MyConnection {
+public class CustomConnection {
     private EObject origin;
     private Pattern pattern;
     private String label;
-    private MyNode source;
-    private MyNode destination;
+    private CustomNode source;
+    private CustomNode destination;
     private boolean negative;
 
-    public MyConnection(String label, MyNode source, MyNode destination) {
+    public CustomConnection(String label, CustomNode source, CustomNode destination) {
         this.label = label;
         this.source = source;
         this.destination = destination;
         negative = false;
     }
 
-    public MyConnection(String label, MyNode source, MyNode destination, EObject o, Pattern p) {
+    public CustomConnection(String label, CustomNode source, CustomNode destination, EObject o, Pattern p) {
         this.label = label;
         this.source = source;
         this.destination = destination;
@@ -31,11 +31,11 @@ public class MyConnection {
         return label;
     }
 
-    public MyNode getSource() {
+    public CustomNode getSource() {
         return source;
     }
 
-    public MyNode getDestination() {
+    public CustomNode getDestination() {
         return destination;
     }
 

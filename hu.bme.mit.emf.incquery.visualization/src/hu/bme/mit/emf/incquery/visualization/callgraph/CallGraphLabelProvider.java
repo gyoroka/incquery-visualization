@@ -1,10 +1,10 @@
 package hu.bme.mit.emf.incquery.visualization.callgraph;
 
 import hu.bme.mit.emf.incquery.visualization.model.AggregatedConnection;
-import hu.bme.mit.emf.incquery.visualization.model.MyConnection;
-import hu.bme.mit.emf.incquery.visualization.model.MyNode;
+import hu.bme.mit.emf.incquery.visualization.model.CustomConnection;
+import hu.bme.mit.emf.incquery.visualization.model.CustomNode;
 import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
-import hu.bme.mit.emf.incquery.visualization.view.Settings;
+import hu.bme.mit.emf.incquery.visualization.view.CustomColorTheme;
 
 import org.eclipse.draw2d.ConnectionRouter;
 import org.eclipse.draw2d.IFigure;
@@ -16,18 +16,25 @@ import org.eclipse.swt.graphics.Color;
 
 public class CallGraphLabelProvider extends LabelProvider implements IConnectionStyleProvider, IEntityStyleProvider {
 
+	CustomColorTheme ct;
+	
+	public CallGraphLabelProvider(CustomColorTheme colorTheme)
+	{
+		ct=colorTheme;
+	}
+	
     @Override
     public String getText(Object element) {
         if (element instanceof PatternElement) {
             PatternElement pe = (PatternElement) element;
             return pe.getName();
         }
-        if (element instanceof MyNode) {
-            MyNode myNode = (MyNode) element;
+        if (element instanceof CustomNode) {
+            CustomNode myNode = (CustomNode) element;
             return myNode.getName();
         }
         // Not called with the IGraphEntityContentProvider
-        if (element instanceof MyConnection) {
+        if (element instanceof CustomConnection) {
             // MyConnection myConnection = (MyConnection) element;
             // return myConnection.getLabel();
             return "";
@@ -95,19 +102,19 @@ public class CallGraphLabelProvider extends LabelProvider implements IConnection
     public Color getColor(Object rel) {
         // TODO Auto-generated method stub
         if (rel instanceof AggregatedConnection) {
-            return Settings.Colors.aggregated;
+            return ct.getColor(CustomColorTheme.AGGREGATED);
         }
-        if (rel instanceof MyConnection) {
-            MyConnection conn = (MyConnection) rel;
+        if (rel instanceof CustomConnection) {
+            CustomConnection conn = (CustomConnection) rel;
             if (conn.isNegative())
-                return Settings.Colors.findNeg;
+                return ct.getColor(CustomColorTheme.FIND_NEGATIVE);
         }
-        return Settings.Colors.defaultRel;
+        return ct.getColor(CustomColorTheme.RELATION_DEFAULT);
     }
 
     @Override
     public Color getHighlightColor(Object rel) {
-        return Settings.Colors.defaultRelHighlight;
+        return ct.getTextColor(CustomColorTheme.RELATION_DEFAULT);
     }
 
     @Override

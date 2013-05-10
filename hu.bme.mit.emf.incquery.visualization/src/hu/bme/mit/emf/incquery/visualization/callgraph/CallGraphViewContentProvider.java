@@ -1,6 +1,6 @@
 package hu.bme.mit.emf.incquery.visualization.callgraph;
 
-import hu.bme.mit.emf.incquery.visualization.model.MyConnection;
+import hu.bme.mit.emf.incquery.visualization.model.CustomConnection;
 import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 
 import java.util.ArrayList;
@@ -30,12 +30,12 @@ public class CallGraphViewContentProvider extends ArrayContentProvider implement
 
         if (source instanceof PatternElement) {
             PatternElement node = (PatternElement) source;
-            List<MyConnection> conns = node.getConnectedTo();
-            List<MyConnection> retcon = new ArrayList<MyConnection>();
-            for (MyConnection c : conns) {
+            List<CustomConnection> conns = node.getConnectedTo();
+            List<CustomConnection> retcon = new ArrayList<CustomConnection>();
+            for (CustomConnection c : conns) {
                 if (c.getDestination().equals(dest)) {
                     // retcon.add(c);
-                    return new MyConnection[] { c };
+                    return new CustomConnection[] { c };
                 }
             }
             return retcon.toArray();

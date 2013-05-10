@@ -1,7 +1,7 @@
 package hu.bme.mit.emf.incquery.visualization.contentgraph;
 import hu.bme.mit.emf.incquery.visualization.model.AggregatedElement;
 import hu.bme.mit.emf.incquery.visualization.model.CheckElement;
-import hu.bme.mit.emf.incquery.visualization.model.MyNode;
+import hu.bme.mit.emf.incquery.visualization.model.CustomNode;
 import hu.bme.mit.emf.incquery.visualization.model.PatternElement;
 import hu.bme.mit.emf.incquery.visualization.model.VariableElement;
 
@@ -87,8 +87,8 @@ public class ContentGraphLayoutAlgorithm implements LayoutAlgorithm {
 				}
 				if (!l)
 				{
-					if (o instanceof MyNode) {
-						System.out.println(((MyNode)o).getName());
+					if (o instanceof CustomNode) {
+						System.out.println(((CustomNode)o).getName());
 					}
 				}
 			}

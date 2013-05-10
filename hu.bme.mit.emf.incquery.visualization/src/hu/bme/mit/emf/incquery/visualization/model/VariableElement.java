@@ -3,7 +3,7 @@ package hu.bme.mit.emf.incquery.visualization.model;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 
-public class VariableElement extends MyNode {
+public class VariableElement extends CustomNode {
     private boolean isParameter;
     private boolean isTemporary;
     private String classifierName;

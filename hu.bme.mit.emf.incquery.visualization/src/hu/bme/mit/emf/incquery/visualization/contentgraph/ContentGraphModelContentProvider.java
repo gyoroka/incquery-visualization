@@ -1,6 +1,6 @@
 package hu.bme.mit.emf.incquery.visualization.contentgraph;
 
-import hu.bme.mit.emf.incquery.visualization.model.MyNode;
+import hu.bme.mit.emf.incquery.visualization.model.CustomNode;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 
 public class ContentGraphModelContentProvider {
 	private ContentGraphModel cgm;
-	public List<MyNode> getNodes()
+	public List<CustomNode> getNodes()
 	{
 		return cgm.getNodes();
 	}
@@ -42,6 +42,7 @@ public class ContentGraphModelContentProvider {
 //			add(pb);
 //		}
 	}
+
 	public void add(PatternBody pb) {
 		for (Variable v:pb.getVariables())
 		{
